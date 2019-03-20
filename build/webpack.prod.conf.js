@@ -4,6 +4,7 @@ var webpack = require('webpack');
 var merge = require('webpack-merge');
 var baseWebpackConfig = require('./webpack.base.conf');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var config = require('../config/index')
 
 var webpackConfig = merge(baseWebpackConfig, {
   entry: {
@@ -30,7 +31,7 @@ var webpackConfig = merge(baseWebpackConfig, {
   },
   module: {
     rules: utils.styleLoaders({
-      sourceMap: true,
+      sourceMap: config.build.productionSourceMap,
       extract: true
     })
   },
@@ -46,7 +47,7 @@ var webpackConfig = merge(baseWebpackConfig, {
       compress: {
         warnings: false
       },
-      sourceMap: true
+      sourceMap: config.build.productionSourceMap
     }),
     // extract css into its own file
     new ExtractTextPlugin({

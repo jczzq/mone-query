@@ -11,7 +11,7 @@ var __awaiter =
       }
       function rejected(value) {
         try {
-          step(generator["throw"](value));
+          step(generator['throw'](value));
         } catch (e) {
           reject(e);
         }
@@ -20,8 +20,8 @@ var __awaiter =
         result.done
           ? resolve(result.value)
           : new P(function(resolve) {
-              resolve(result.value);
-            }).then(fulfilled, rejected);
+            resolve(result.value);
+          }).then(fulfilled, rejected);
       }
       step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
@@ -30,11 +30,11 @@ var __awaiter =
 const CONFIG = {
   pageSize: 20,
   pageIndex: 1,
-  pageName: "pageIndex",
-  sizeName: "pageSize",
-  rowsName: "resultData.rows",
-  totalName: "resultData.total",
-  instanceName: "data"
+  pageName: 'pageIndex',
+  sizeName: 'pageSize',
+  rowsName: 'resultData.rows',
+  totalName: 'resultData.total',
+  instanceName: 'data'
 };
 /**
  * 视图模型
@@ -108,8 +108,8 @@ export class ListView extends ViewModel {
         var req = args.shift();
         this.loading = true;
         const res = yield req.apply(req, args);
-        this.rows = getDeepProp(res, this.rowsName.split("."));
-        this.total = getDeepProp(res, this.totalName.split("."));
+        this.rows = getDeepProp(res, this.rowsName.split('.'));
+        this.total = getDeepProp(res, this.totalName.split('.'));
         return Promise.resolve(res);
       } catch (error) {
         return Promise.reject(error);
@@ -142,7 +142,7 @@ export class DetailView extends ViewModel {
         const res = yield req.apply(req, args);
         return Promise.resolve(res);
       } catch (error) {
-        console.info("DetailView delete data error", error);
+        console.info('DetailView delete data error', error);
         return Promise.reject(error);
       } finally {
         this.deleting = false;
@@ -159,7 +159,7 @@ export class DetailView extends ViewModel {
         this.instance = res[this.instanceName];
         return Promise.resolve(res);
       } catch (error) {
-        console.info("DetailView load data error", error);
+        console.info('DetailView load data error', error);
         return Promise.reject(error);
       } finally {
         this.loading = false;
