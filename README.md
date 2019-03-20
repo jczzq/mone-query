@@ -86,7 +86,7 @@ data() {
 | size-name | String | 分页参数中的pageSize键名 | - | pageSize |
 | colbox | Object | 字段显示框方位 | - | { placement: "top", width: "540px", trigger: "click" } |
 | visible-fields | Boolean\|Array | 默认显示字段 | true: 全部显示; false: 全部隐藏; ["propA", "propB", ...] | true |
-| visible-fields-config | Array | 字段在工具栏的显示配置 | - | - |
+| visible-fields-config | Array\<FieldGroup> | 字段在工具栏的显示配置 | - | - |
 
 
 #### colbox Attributes
@@ -109,12 +109,12 @@ data() {
 #### FieldGroup class
 | 属性名 | 类型 | 含义 | 可选值 | 默认值 |
 | -- | -- | -- | -- | -- |
-| title | String | 排列顺序 | - | - |
+| title | String | 组标题 | - | - |
 | order | String | 排列顺序 | - | - |
-| selection | String | 排列顺序 | - | - |
-| checkAll | String | 排列顺序 | - | - |
-| isIndeterminate | String | 排列顺序 | - | - |
-| colProps | String | 排列顺序 | - | - |
+| selection | Array | 选中的 | - | - |
+| checkAll | Boolean | 是否全选 | - | true |
+| isIndeterminate | Boolean | 是否半选 | - | false |
+| colProps | Array | 组成员 | - | - |
 
 
 ## 查询**配置**标准结构（application/json）
