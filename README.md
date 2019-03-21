@@ -1,6 +1,6 @@
 # mone-query 组件API
 ![mone-query](/doc/MoneQuery.jpg)
-`mone-query`是基于`element-ui/table`的表格组件，它通过丰富的配置让你无须编码就可以完成大部分表格需求。
+`mone-query`是基于`element-ui`的表格组件，它通过丰富的配置让你无须编码就可以完成大部分表格需求。
 
 ## 必要依赖
 `vue` >= 2.4.0
