@@ -29,8 +29,8 @@ Vue.use(MoneQuery, {
 ```
 <mone-query border :config="config" :data="data" />
 ...
-import CONFIG from "mone-query/cols.json";
-import Data from "mone-query/sample.json";
+import Config from "@/Config.json";
+import Data from "@/Data.json";
 data() {
   return {
     // 传入请求路径
@@ -38,7 +38,7 @@ data() {
     data: "/api/data"
     // or
     // 传入对象
-    config: CONFIG.resultData,
+    config: Config.resultData,
     data: Data.resultData
   };
 }
@@ -57,7 +57,6 @@ data() {
     受配置影响的部分包括：
       - colbox: 工具栏的字段面板
       - cols: 表头
-      - cols: 查询
       - ......
   
 4. 
@@ -95,16 +94,23 @@ data() {
 | placement | String | 展示方位 | - | top |
 | width | String | 面板宽度 | - | 540px |
 | trigger | String | 触发事件类型 | - | click |
-| value | Array | 默认显示哪些字段 | - | （所有字段） |
 
-#### Col class
+### Col class
 | 属性名 | 类型 | 含义 | 可选值 | 默认值 |
 | -- | -- | -- | -- | -- |
 | label | String | 列标题 | - | - |
 | prop | String | 列字段名 | - | - |
 | type | String | 列字段类型 | `varchar`、`option`、`date`、`datetime` | - |
 | width | String | 列宽度 | width | width |
-| order | String | 排列顺序 | - | - |
+| order | Number | 排列顺序 | - | - |
+
+#### Col.type enum
+| 枚举值 | 含义 |
+| -- | -- |
+| varchar | 文本 |
+| option | 多选 |
+| date | 日期 |
+| datetime | 日期时间 |
 
 #### FieldGroup class
 | 属性名 | 类型 | 含义 | 可选值 | 默认值 |
@@ -218,3 +224,9 @@ page: {
 - resultData 响应结果
   - rows 结果集
   - total 结果总数
+
+
+## TODO
+- 左侧锁定列
+- 右侧操作栏
+- 批量删除
