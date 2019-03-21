@@ -1,25 +1,28 @@
 {
   "resultCode": "0000",
-  "resultData": [
-    {
-      "id": 1,
-      "name": "jinchao",
-      "nickname": "jczzq",
-      "age": "18",
-      "grade": 5,
-      "isMarried": false,
-      "birthday": "2018-08-08",
-      "schoolTime": "2018-08-08 08:08:08"
-    },
-    {
-      "id": 2,
-      "name": "Tiger Woods",
-      "nickname": "woods",
-      "age": "48",
-      "grade": 6,
-      "isMarried": true,
-      "birthday": "2018-08-08",
-      "schoolTime": "2018-08-08 08:08:08"
-    }
-  ]
+  "resultData": {
+    "total": 233,
+    "rows": [
+      {
+        "id": 1,
+        "name": "jinchao",
+        "nickname": "jczzq",
+        "age": "18",
+        "grade": 5,
+        "isMarried": false,
+        "birthday": "2018-08-08",
+        "schoolTime": "2018-08-08 08:08:08"
+      },
+      {
+        "id": 2,
+        "name": "Tiger Woods",
+        "nickname": "woods",
+        "age": "48",
+        "grade": 6,
+        "isMarried": true,
+        "birthday": "2018-08-08",
+        "schoolTime": "2018-08-08 08:08:08"
+      }
+    ]
+  }
 }

@@ -1,9 +1,9 @@
-var utils = require('./utils')
-var isProduction = process.env.NODE_ENV === 'production'
+var utils = require('./utils');
+var isProduction = process.env.NODE_ENV === 'production';
 
 module.exports = {
   loaders: utils.cssLoaders({
-    sourceMap: isProduction,
+    sourceMap: false,
     extract: isProduction
   }),
   transformToRequire: {
@@ -12,4 +12,4 @@ module.exports = {
     img: 'src',
     image: 'xlink:href'
   }
-}
+};

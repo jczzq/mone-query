@@ -260,7 +260,6 @@ export default {
         });
       });
       this.stmt.parameters.params = _params;
-      console.log(this.stmt.parameters.params);
     },
     getValueFormat(col) {
       if (col.valueFormat) return col.valueFormat;
@@ -383,7 +382,11 @@ export default {
   }
 };
 </script>
+
 <style lang="scss">
+.m-l {
+  margin-left: 16px;
+}
 .mone-query {
   box-sizing: border-box;
   .tool-box {

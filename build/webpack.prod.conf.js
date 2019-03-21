@@ -4,18 +4,19 @@ var webpack = require('webpack');
 var merge = require('webpack-merge');
 var baseWebpackConfig = require('./webpack.base.conf');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
+const OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 var config = require('../config/index')
 
 var webpackConfig = merge(baseWebpackConfig, {
   entry: {
-    mone: './src/index.js'
+    'mone-query': './src/index.js'
   },
   output: {
-    path: path.resolve(__dirname, '../dist'),
+    path: path.resolve(__dirname, '../lib'),
     filename: 'index.js',
     chunkFilename: '[id].js',
     libraryTarget: 'umd',
-    library: 'MONE',
+    library: 'MoneQuery',
     umdNamedDefine: true
   },
   resolve: {
@@ -51,22 +52,18 @@ var webpackConfig = merge(baseWebpackConfig, {
     }),
     // extract css into its own file
     new ExtractTextPlugin({
-      filename: path.posix.join('[name].css')
+      filename: path.posix.join('style.css'),
+      allChunks: true
+    }),
+    // Compress extracted CSS. We are using this plugin so that possible
+    // duplicated CSS from different components can be deduped.
+    new OptimizeCSSPlugin({
+      cssProcessorOptions: {
+        safe: true
+      }
     })
   ]
 });
-
-var CompressionWebpackPlugin = require('compression-webpack-plugin');
-
-webpackConfig.plugins.push(
-  new CompressionWebpackPlugin({
-    asset: '[path].gz[query]',
-    algorithm: 'gzip',
-    test: new RegExp('\\.(' + ['js', 'css'].join('|') + ')$'),
-    threshold: 10240,
-    minRatio: 0.8
-  })
-);
 
 if (process.env.npm_config_report) {
   var BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
