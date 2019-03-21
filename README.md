@@ -103,6 +103,7 @@ data() {
 | type | String | 列字段类型 | `varchar`、`option`、`date`、`datetime` | - |
 | width | String | 列宽度 | width | width |
 | order | Number | 排列顺序 | - | - |
+| action | String | 查询类型 | - | - |
 
 #### Col.type enum
 | 枚举值 | 含义 |
@@ -230,3 +231,7 @@ page: {
 - 左侧锁定列
 - 右侧操作栏
 - 批量删除
+- 排列顺序
+- 默认查询动作
+  - varchar lk
+  -  lk
