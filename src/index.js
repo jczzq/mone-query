@@ -2,7 +2,9 @@ import moneQuery from './components/main';
 import Bus from './bus';
 import request from './api/request';
 
-import './style.scss';
+// import './style.scss';
+import 'element-theme-nio';
+import Header from 'element-ui/lib/header';
 import Button from 'element-ui/lib/button';
 import Row from 'element-ui/lib/row';
 import Col from 'element-ui/lib/col';
@@ -23,20 +25,8 @@ import CheckboxGroup from 'element-ui/lib/checkbox-group';
 
 /* istanbul ignore next */
 moneQuery.install = function(Vue, options = {}) {
-  Vue.prototype.$ELEMENT = { size: 'small' };
-  Vue.prototype.$MONE_QUERY = {
-    baseURL: options.baseURL || '/',
-    pageName: options.pageName,
-    sizeName: options.sizeName,
-    rowsName: options.rowsName,
-    totalName: options.totalName,
-    instanceName: options.instanceName
-  };
-
-  Vue.component(moneQuery.name, moneQuery);
-  Vue.prototype.$request = request;
-  Vue.prototype.$bus = new Vue(Bus);
-
+  Vue.prototype.$ELEMENT = { size: options.size || 'small' };
+  Vue.use(Header);
   Vue.use(Button);
   Vue.use(Row);
   Vue.use(Col);
@@ -54,6 +44,13 @@ moneQuery.install = function(Vue, options = {}) {
   // Vue.use(InputNumber);
   // Vue.use(TimePicker);
   Vue.prototype.$notify = Notification;
+
+  options.baseUrl = options.baseUrl || '';
+  Vue.prototype.$MONE_QUERY = options;
+
+  Vue.component(moneQuery.name, moneQuery);
+  Vue.prototype.$request = request;
+  Vue.prototype.$bus = new Vue(Bus);
 };
 
 if (typeof window !== 'undefined' && window.Vue) {

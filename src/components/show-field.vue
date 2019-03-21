@@ -1,11 +1,11 @@
 <template>
   <el-popover
-    class="show-field"
+    popper-class="show-field"
     :placement="placement"
     :width="width"
     :trigger="trigger"
   >
-    <p>
+    <p class="f-g-t">
       <el-checkbox
         :indeterminate="isIndeterminate"
         v-model="checkAll"
@@ -107,7 +107,11 @@ export default {
   watch: {},
   methods: {
     handleCheckAllChange(val) {
-      this.showPropsProxy = val ? this.fields.map(x => x.prop) : [];
+      if (val && Array.isArray(val)) {
+        this.showPropsProxy = val;
+      } else {
+        this.showPropsProxy = val ? this.fields.map(x => x.prop) : [];
+      }
       this.config.forEach(f => {
         f.checkAll = val;
         f.isIndeterminate = false;
@@ -148,6 +152,9 @@ export default {
   box-sizing: border-box;
   .m-l {
     margin-left: 12px;
+  }
+  .f-g-t {
+    margin: 4px 0 8px 0;
   }
 }
 </style>

@@ -1,45 +1,48 @@
 <template>
   <div class="mone-query" v-loading="CONFIGLoading">
-    <p class="tool-box">
-      <el-button type="default" @click="resetParam(cols)">重置</el-button>
-      <el-button type="primary" :loading="stmt.loading" @click="stmtLoad()"
-        >搜索</el-button
-      >
-      <!-- <el-button
-        type="primary"
-        :loading="stmt.exporting"
-        @click="handleExport()"
-        >导出</el-button
-      > -->
-      <show-field
-        :fields="cols"
-        ref="showFieldRef"
-        v-model="showProps"
-        :placement="colbox.placement"
-        :width="colbox.width"
-        :trigger="colbox.trigger"
-        :config="configShowFields"
-      />
-    </p>
+    <el-row class="tool-box">
+      <el-col :span="24" class="text-right">
+        <el-button type="default" @click="resetParam()">重置</el-button>
+        <el-button type="primary" :loading="stmt.loading" @click="stmtLoad()"
+          >搜索</el-button
+        >
+        <!-- <el-button
+          type="primary"
+          :loading="stmt.exporting"
+          @click="handleExport()"
+          >导出</el-button
+        > -->
+        <show-field
+          v-if="CONFIG && CONFIG.colbox"
+          :fields="CONFIG.cols"
+          ref="showFieldRef"
+          v-model="showProps"
+          :placement="CONFIG.colbox.placement"
+          :width="CONFIG.colbox.width"
+          :trigger="CONFIG.colbox.trigger"
+          :config="configShowFields"
+        />
+      </el-col>
+    </el-row>
     <el-table
+      v-if="CONFIG"
       :data="stmt.rows"
-      :border="border"
-      :row-key="row => row[primaryKey]"
-      :height="height"
-      :show-header="showHeader"
-      :max-height="maxHeight"
+      :border="border || CONFIG.border"
+      :row-key="row => row[primaryKey || CONFIG.primaryKey]"
+      :height="CONFIG.height"
+      :show-header="CONFIG.showHeader"
+      :max-height="CONFIG.maxHeight"
       @selection-change="handleSelectionChange"
       @sort-change="handleSortChange"
     >
       <el-table-column
-        v-if="showIndex"
+        v-if="CONFIG.showIndex"
         :index="index => index + 1"
         type="index"
         align="center"
       ></el-table-column>
       <el-table-column
-        draggable
-        v-if="showSelection"
+        v-if="CONFIG.showSelection && showProps && showProps.length"
         reserve-selection
         type="selection"
         align="center"
@@ -50,34 +53,41 @@
         :key="item.prop"
         :column-key="item.prop"
         :prop="item.prop"
-        :label="item.label"
         :width="item.width"
       >
-        <template slot="header">
-          <component
-            v-if="COMPONENT_NAME_MAP.hasOwnProperty(item.type)"
-            clearable
-            class="inline-block"
-            size="mini"
-            @click.native.stop=""
-            @select="handleChoose"
-            :fetch-suggestions="
-              (queryString, cb) => {
-                querySearchAsync(queryString, cb, item);
-              }
-            "
-            :placeholder="item.placeholder"
-            :value-format="item.valueFormat"
-            :type="item.elType"
-            :is="COMPONENT_NAME_MAP[item.type]"
-            v-model="stmt.parameters.params[item.prop].value"
-          >
-          </component>
-          <p>
-            <!-- {{ JSON.stringify(scope.column) }} -->
+        <span slot="header" slot-scope="scope">
+          <span>
             {{ item.label }}
-          </p>
-        </template>
+          </span>
+          <el-popover v-if="COMPONENT_NAME_MAP.hasOwnProperty(item.type)">
+            <component
+              clearable
+              class="inline-block"
+              size="mini"
+              @click.native.stop=""
+              @select="handleChoose"
+              :fetch-suggestions="
+                (queryString, cb) => {
+                  querySearchAsync(queryString, cb, item);
+                }
+              "
+              :value-key="item.prop"
+              :trigger-on-focus="false"
+              :placeholder="item.placeholder"
+              :value-format="item.valueFormat"
+              :type="item.elType"
+              :is="COMPONENT_NAME_MAP[item.type]"
+              v-model="stmt.parameters.params[item.prop].value"
+            >
+            </component>
+            <el-button
+              slot="reference"
+              type="text"
+              icon="el-icon-search"
+              @click.stop=""
+            ></el-button>
+          </el-popover>
+        </span>
       </el-table-column>
     </el-table>
 
@@ -94,7 +104,7 @@
 </template>
 
 <script>
-import { ListView, Param } from "../class/ViewModel";
+import { ListView, Param, getDeepProp } from "../class/ViewModel";
 import FieldGroup from "../class/FieldGroup";
 import showField from "./show-field";
 
@@ -112,34 +122,13 @@ export default {
     height: {
       type: [String, Number]
     },
-    maxHeight: {
-      type: [String, Number]
-    },
     border: {
-      type: Boolean,
-      default: false
-    },
-    showHeader: {
-      type: Boolean,
-      default: true
-    },
-    showSelection: {
-      type: Boolean,
-      default: true
-    },
-    showIndex: {
       type: Boolean,
       default: false
     },
     primaryKey: {
       type: String,
       default: "id"
-    },
-    colbox: {
-      type: Object,
-      default() {
-        return {};
-      }
     },
     pageName: {
       type: String
@@ -152,6 +141,9 @@ export default {
     },
     totalName: {
       type: String
+    },
+    colbox: {
+      type: Object
     },
     visibleFields: {
       type: Boolean,
@@ -175,10 +167,10 @@ export default {
         // time: "el-time-picker",
       },
       stmt: new ListView({
-        pageName: this.pageName || this.$MONE_QUERY.pageName,
-        sizeName: this.sizeName || this.$MONE_QUERY.sizeName,
-        rowsName: this.rowsName || this.$MONE_QUERY.rowsName,
-        totalName: this.totalName || this.$MONE_QUERY.totalName
+        pageName: this.pageName,
+        sizeName: this.sizeName,
+        rowsName: this.rowsName,
+        totalName: this.totalName
       }),
       showProps: [],
       configShowFields: [],
@@ -188,11 +180,13 @@ export default {
   computed: {
     cols() {
       if (this.CONFIG.cols) {
-        return this.CONFIG.cols.map(col => {
-          col.valueFormat = this.getValueFormat(col);
-          col.elType = this.getElType(col);
-          return col;
-        });
+        return this.CONFIG.cols
+          .filter(x => this.showProps.includes(x.prop))
+          .map(col => {
+            col.valueFormat = this.getValueFormat(col);
+            col.elType = this.getElType(col);
+            return col;
+          });
       }
       return [];
     }
@@ -204,23 +198,53 @@ export default {
     this.setup();
     this.stmtLoad();
   },
-  mounted() {},
   methods: {
     async loadConfig() {
       try {
         this.CONFIGLoading = true;
         if (typeof this.config === "string") {
-          const { resultData } = await this.$request(this.config);
+          const { resultData } = await this.$request(this.config, null, "GET", {
+            baseURL: this.$MONE_QUERY.baseUrl
+          });
           if (resultData) this.CONFIG = resultData;
         } else {
           this.CONFIG = this.config;
         }
+        this.initConfig();
         // 查询参数
-        this.resetParam(this.CONFIG.cols);
+        this.resetParam();
       } catch (error) {
         this.$notify.error("mone-query: load config data failed");
       } finally {
         this.CONFIGLoading = false;
+      }
+    },
+    initConfig() {
+      this.CONFIG.pageName = this.pageName;
+      this.CONFIG.sizeName = this.sizeName;
+      this.CONFIG.rowsName = this.rowsName;
+      this.CONFIG.totalName = this.totalName;
+      this.CONFIG.visibleFields = this.visibleFields;
+      this.CONFIG.visibleFieldConfig = this.visibleFieldConfig;
+      this.CONFIG.colbox = this.colbox;
+
+      if (!this.CONFIG.pageName) {
+        this.CONFIG.pageName = this.$MONE_QUERY.pageName;
+      }
+      if (!this.CONFIG.sizeName) {
+        this.CONFIG.sizeName = this.$MONE_QUERY.sizeName;
+      }
+      if (!this.CONFIG.rowsName) {
+        this.CONFIG.rowsName = this.$MONE_QUERY.rowsName;
+      }
+      if (!this.CONFIG.totalName) {
+        this.CONFIG.totalName = this.$MONE_QUERY.totalName;
+      }
+      if (!this.CONFIG.colbox) {
+        this.CONFIG.colbox = this.$MONE_QUERY.colbox || {};
+      }
+      if (this.CONFIG.visibleFields == null) {
+        this.CONFIG.visibleFields = this.$MONE_QUERY.visibleFields;
       }
     },
     setup() {
@@ -229,15 +253,9 @@ export default {
     },
     // 设置显示字段
     setShowFields() {
-      if (typeof this.visibleFields === "boolean") {
-        this.$refs.showFieldRef.handleCheckAllChange(this.visibleFields);
-      } else {
-        this.showProps = this.visibleFields;
-      }
-
       // 设置字段在工具栏的显示规则
-      if (this.visibleFieldConfig) {
-        this.configShowFields = this.visibleFieldConfig;
+      if (this.CONFIG.visibleFieldConfig) {
+        this.configShowFields = this.CONFIG.visibleFieldConfig;
       } else {
         this.configShowFields.push(
           new FieldGroup({
@@ -245,13 +263,16 @@ export default {
           })
         );
       }
+      this.$nextTick(() => {
+        this.$refs.showFieldRef.handleCheckAllChange(this.CONFIG.visibleFields);
+      });
     },
     requestUrl() {
-      return this.$MONE_QUERY.baseURL + this.data;
+      return this.$MONE_QUERY.baseUrl + this.data;
     },
-    resetParam(cols) {
+    resetParam() {
       const _params = {};
-      cols.forEach(col => {
+      this.CONFIG.cols.forEach(col => {
         _params[col.prop] = new Param({
           field: col.prop,
           filedType: col.type,
@@ -293,14 +314,19 @@ export default {
     },
     stmtLoad() {
       const primary = this.stmt;
+      if (typeof this.data !== "string") {
+        primary.rows = this.data;
+        primary.total = this.data.length;
+        return;
+      }
       if (primary.loading) return;
 
       const _query = primary.parameters.params;
       const pars = [];
       Object.keys(_query)
-        .filter(x => _query[x] != null)
+        .filter(x => _query[x].value != null)
         .forEach(x => {
-          const field = this.cols.find(f => f.prop === x);
+          const field = this.CONFIG.cols.find(f => f.prop === x);
           if (!field) return;
           switch (field.type) {
             case "datetime":
@@ -338,14 +364,17 @@ export default {
         });
     },
     handleSelectionChange(val) {
-      if (this.showHeader && this.showSelection) {
+      if (this.CONFIG.showHeader && this.CONFIG.showSelection) {
         this.multipleSelection = val;
       }
     },
     handleChoose() {},
     async querySearchAsync(queryString, cb, field) {
       if (!queryString) return cb([]);
-      const { resultData } = await this.$request(
+      if (typeof this.data !== "string") {
+        return cb([]);
+      }
+      const res = await this.$request(
         this.requestUrl(),
         {
           header: [field.prop],
@@ -358,17 +387,17 @@ export default {
             }
           ],
           page: {
-            [this.pageName]: 1,
-            [this.sizeName]: 20
+            [this.CONFIG.pageName]: 1,
+            [this.CONFIG.sizeName]: 20
           },
           orderBys: []
         },
         "POST"
       );
-      cb(resultData);
+      cb(getDeepProp(res, this.stmt.rowsName.split(".")));
     },
     handleSortChange({ prop, order }) {
-      if (this.showHeader && this.showSelection) {
+      if (this.CONFIG.showHeader && this.CONFIG.showSelection) {
         if (prop && order) {
           this.stmt.parameters.sort.orderFiled = prop;
           this.stmt.parameters.sort.orderType = order.replace("ending", "");
@@ -378,19 +407,29 @@ export default {
         }
         this.stmtLoad();
       }
+    },
+    // 自定义表头
+    customFieldColumn(h, { column, $index }) {
+      return h();
     }
   }
 };
 </script>
 
 <style lang="scss">
-.m-l {
-  margin-left: 16px;
-}
 .mone-query {
+  .m-l {
+    margin-left: 12px;
+  }
+  .m-r {
+    margin-left: 12px;
+  }
+  .text-right {
+    text-align: right;
+  }
   box-sizing: border-box;
   .tool-box {
-    padding: 16px;
+    padding: 16px 0;
     background-color: white;
   }
 }

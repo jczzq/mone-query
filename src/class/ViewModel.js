@@ -206,7 +206,7 @@ export class Param {
   }
 }
 
-const getDeepProp = (a, props) => {
+export const getDeepProp = (a, props) => {
   try {
     if (props.length) {
       let p = props.shift();

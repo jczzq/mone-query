@@ -2,9 +2,12 @@ import Vue from 'vue';
 import App from './App';
 
 // 全局引入
-import "mone-query/lib/style.css";
-import MoneQuery from 'mone-query';
-Vue.use(MoneQuery);
+import "./mock";
+// import "mone-query/lib/style.css";
+import MoneQuery from '@';
+Vue.use(MoneQuery, {
+  baseUrl: '/api'
+});
 
 /* eslint-disable no-new */
 new Vue({

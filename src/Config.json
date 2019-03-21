@@ -1,11 +1,12 @@
 {
   "resultCode": "0000",
   "resultData": {
+    "showSelection": true,
     "cols": [
       {
         "label": "姓名",
         "prop": "name",
-        "width": "80px",
+        "width": "180px",
         "type": "varchar"
       },
       {
