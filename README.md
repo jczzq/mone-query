@@ -1,10 +1,12 @@
 # mone-query 组件API
-![mone-query](/doc/MoneQuery.jpg)
-`mone-query`是基于`element-ui`的表格组件，它通过丰富的配置让你无须编码就可以完成大部分表格需求。
+![mone-query](/docs/MoneQuery.png)
+`mone-query`是基于`element-ui`的查询组件，它通过丰富的配置让你尽可能少的前端编码就可以完成大部分报表需求。
 
 ## 必要依赖
 `vue` >= 2.4.0
+
 `axios` >= 0.16.0
+
 ## 安装
 ### CommonJS方式
 ```
@@ -46,11 +48,11 @@ data() {
 ## 运行机制
 1. 校验入参
 
-    `mone-query`有两个必要参数`config`和`data`, config控制表格结构和自定义功能，data渲染数据行，这两个参数可以传入ajax路径字符串，也可以传入json对象，其他类型的参数传入时会抛出异常。
+    `mone-query`有两个必要参数`config`和`data`, config控制表格结构和自定义功能，data渲染数据行，这两个参数可以传入ajax路径字符串，也可以传入json对象，其他类型的参数传入时会抛出异常。注意组件还有其它一些参数可以传入，组件传入的参数与config有一些参数是重复的，甚至你还可以在Vue.use时给所有的组件实例传入默认参数，这是为了增加组件配置的灵活性，不过通过组件直接传入的参数优先级最高，config属性其次，最后是默认配置
 
 2. 根据config参数获取配置
 
-    如果config传入字符串，那么组件首先会发起Get请求查询配置json，这段期间表格会一直loading到请求结束，如果请求失败，表格将会触发`on-error`事件，使用者可以监听事件做后续处理，或者让页面保持错误面板的状态；请求成功的结果将直接作为配置对象使用。如果config传入json，将直接作为配置对象使用。
+    如果config传入字符串，那么组件首先会发起Get请求查询配置json，这段期间表格会一直loading到请求结束，如果请求失败，表格将会触发`on-error`事件，使用者可以监听事件做后续处理，或者让页面保持错误面板的状态；请求成功的结果将直接作为配置对象使用。如果config传入json，将直接作为配置对象使用(具体结构示例参照`Config.json`)。
 
 3. 根据配置对象渲染表结构
 
@@ -59,7 +61,11 @@ data() {
       - cols: 表头
       - ......
 
-4. 
+4. 根据data参数获取结果集
+
+    如果data传入字符串，那么组件会将之作为ajax路径查询结果集。如果data传入json，将直接作为结果集使用（具体结构示例参照`Data.json`）。
+
+5. 有时候在结果集渲染之前需要对某些字段进行处理，比如映射新值、时间转换等等，这时提供formatters对象，这是一个属性名为col.prop、属性值为该列过滤函数的对象，过滤函数有四个形参：`row, column, cellValue, index`
 
 
 ## MoneQuery Attributes
@@ -67,15 +73,17 @@ data() {
 | -- | -- | -- | -- | -- |
 | *config | Object \| String | 表头列 | ajax路径\配置对象 | {} |
 | *data | Array \| String | 数据行 | ajax路径\数据集合 | [] |
+| height | String/Number | Table高度 | auto\80\80px | auto |
+| max-height | String/Number | Table的最大高度 | - | - |
+| border | Boolean | 是否带有纵向边框 | - | false |
+| formatters | Object | 包含各个列过滤函数的对象 | - | {} |
+| primary-key | String | 主键(数据行多选时必要) | - | id |
 
 ### config Attributes
 | 属性名 | 类型 | 含义 | 可选值 | 默认值 |
 | -- | -- | -- | -- | -- |
 | primary-key | String | 主键(数据行多选时必要) | - | id |
 | cols | Array\<Col> | 列 | - | id |
-| height | String/Number | Table高度 | auto\80\80px | auto |
-| max-height | String/Number | Table的最大高度 | - | - |
-| border | Boolean | 是否带有纵向边框 | - | false |
 | show-header | Boolean | 是否显示表头（包含筛选条件） | - | true |
 | show-selection | Boolean | 是否显示多选框 | - | true |
 | show-index | Boolean | 是否自定义序列 | - | false |
@@ -103,7 +111,8 @@ data() {
 | type | String | 列字段类型 | `varchar`、`option`、`date`、`datetime` | - |
 | width | String | 列宽度 | width | width |
 | order | Number | 排列顺序 | - | - |
-| action | String | 查询类型 | - | - |
+| action | String | 查询类型 | - | varchar:lk,option:in; data:lt& gt; datetime:le& ge |
+| placeholder | String | 输入提示 | - | - |
 
 #### Col.type enum
 | 枚举值 | 含义 |
@@ -228,12 +237,14 @@ page: {
 
 
 ## TODO
-- 左侧锁定列
-- 右侧操作栏
-- 批量删除
-- 排列顺序
-- 默认查询动作
+- [ ] 左侧锁定列
+- [ ] 右侧操作栏
+- [ ] 批量删除
+- [ ] 排列顺序
+- [ ] 默认查询动作
   - varchar lk
   - option in 
   - data lt & gt
   - datetime le & ge
+- option多选下拉框类型
+- [x] 结果集formatter处理
