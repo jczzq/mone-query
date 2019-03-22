@@ -97,7 +97,7 @@
                 :value-format="item.valueFormat"
                 :type="item.elType"
                 :is="COMPONENT_NAME_MAP[item.type]"
-                v-model="stmt.parameters.params[item.prop].value"
+                v-model="PARAMS[item.prop].value"
               >
               </component>
               <el-button
@@ -189,14 +189,10 @@ export default {
   data() {
     return {
       CONFIG: {},
+      PARAMS: {},
       CONFIGLoading: false,
       COMPONENT_NAME_MAP: Col.TYPES,
-      stmt: new ListView({
-        pageName: this.pageName,
-        sizeName: this.sizeName,
-        rowsName: this.rowsName,
-        totalName: this.totalName
-      }),
+      stmt: new ListView(),
       showProps: [],
       configShowFields: [],
       multipleSelection: [],
@@ -245,12 +241,18 @@ export default {
         } else {
           this.CONFIG = this.config;
         }
+        this.stmt = new ListView({
+          pageName: this.CONFIG.pageName,
+          sizeName: this.CONFIG.sizeName,
+          rowsName: this.CONFIG.rowsName,
+          totalName: this.CONFIG.totalName
+        });
         // 初始化外部设置
         this.initConfig();
-        // 初始化查询参数
-        this.resetParam();
         // 设置显示字段
         this.setShowFields();
+        // 初始化查询参数
+        this.resetParam();
         // 查询数据
         this.stmtLoad();
       } catch (error) {
@@ -317,19 +319,21 @@ export default {
     },
     // 设置显示字段
     setShowFields() {
-      this.$nextTick(() => {
-        this.$refs.showFieldRef.handleCheckAllChange(this.CONFIG.visibleFields);
-        // 设置字段在工具栏的显示规则
-        if (this.CONFIG.visibleFieldConfig) {
-          this.configShowFields = this.CONFIG.visibleFieldConfig;
-        } else {
-          this.configShowFields.push(
-            new FieldGroup({
-              colProps: this.showProps
-            })
-          );
-        }
-      });
+      if (this.CONFIG.visibleFields && Array.isArray(this.CONFIG.visibleFields)) {
+        this.showProps = this.CONFIG.visibleFields;
+      } else {
+        this.showProps = this.CONFIG.visibleFields ? this.CONFIG.cols.map(x => x.prop) : [];
+      }
+      // 设置字段在工具栏的显示规则
+      if (this.CONFIG.visibleFieldConfig) {
+        this.configShowFields = this.CONFIG.visibleFieldConfig;
+      } else {
+        this.configShowFields.push(
+          new FieldGroup({
+            colProps: this.showProps
+          })
+        );
+      }
     },
     requestUrl() {
       return this.$MONE_QUERY.baseUrl + this.data;
@@ -340,14 +344,14 @@ export default {
       this.CONFIG.cols.forEach(col => {
         _params[col.prop] = new Param({
           field: col.prop,
-          filedType: col.type,
-          action: "eq",
-          value: this.getParamVal(col)
+          fieldType: col.type,
+          action: this.getAction(col),
+          value: this.getInitVal(col)
         });
         _fixed[col.prop] = col.fixed;
       });
       this.FIXED = _fixed;
-      this.stmt.parameters.params = _params;
+      this.PARAMS = _params;
     },
     getValueFormat(col) {
       if (col.valueFormat) return col.valueFormat;
@@ -360,7 +364,7 @@ export default {
           return void 0;
       }
     },
-    getParamVal(col) {
+    getInitVal(col) {
       switch (col.type) {
         case "option":
         case "date":
@@ -371,6 +375,7 @@ export default {
       }
     },
     getElType(col) {
+      if (col.elType) return col.elType;
       switch (col.type) {
         case "date":
           return "daterange";
@@ -379,6 +384,55 @@ export default {
         default:
           return void 0;
       }
+    },
+    getAction(col) {
+      if (col.action) return col.action;
+      switch (col.type) {
+        case "varchar":
+          return "lk";
+        case "option":
+          return "in";
+        default:
+          return void 0;
+      }
+    },
+    formatParams() {
+      const _params = this.PARAMS;
+      const pars = [];
+      Object.keys(_params).forEach(x => {
+        const field = _params[x];
+        if (!field) return;
+        switch (field.fieldType) {
+          case "varchar":
+            if (field.value) {
+              pars.push(field);
+            }
+            break;
+          case "option":
+            if (field.value && field.value.length) {
+              pars.push(field);
+            }
+            break;
+          case "datetime":
+          case "date":
+            if (field.value && field.value.length === 2) {
+              pars.push({
+                field: field.field,
+                action: "gt",
+                fieldType: field.fieldType,
+                value: field.value[0]
+              });
+              pars.push({
+                field: field.field,
+                action: "lt",
+                fieldType: field.fieldType,
+                value: field.value[1]
+              });
+            }
+            break;
+        }
+      });
+      return pars;
     },
     stmtLoad() {
       const primary = this.stmt;
@@ -389,41 +443,8 @@ export default {
       }
       if (primary.loading) return;
 
-      const _query = primary.parameters.params;
-      const pars = [];
-      Object.keys(_query)
-        .filter(x => _query[x].value != null)
-        .forEach(x => {
-          const field = this.CONFIG.cols.find(f => f.prop === x);
-          if (!field) return;
-          switch (field.type) {
-            case "datetime":
-            case "date":
-              if (_query[x] && _query[x].length === 2) {
-                pars.push({
-                  field: x,
-                  action: "gt",
-                  filedType: field.type,
-                  value: _query[x][0]
-                });
-                pars.push({
-                  field: x,
-                  action: "lt",
-                  filedType: field.type,
-                  value: _query[x][1]
-                });
-              }
-              break;
-            default:
-              pars.push({
-                field: x,
-                action: "eq",
-                filedType: field.type,
-                value: primary.parameters.params[x]
-              });
-              break;
-          }
-        });
+      primary.parameters.colProps = this.showProps;
+      primary.parameters.params = this.formatParams();
 
       primary
         .load(this.$request, this.requestUrl(), primary.parameters, "POST")
@@ -442,24 +463,19 @@ export default {
       if (typeof this.data !== "string") {
         return cb([]);
       }
+      const primary = this.stmt;
+      primary.parameters.colProps = [field.prop];
+      primary.parameters.params = [
+        {
+          field: field.prop,
+          fieldType: field.type,
+          action: this.getAction(field),
+          value: queryString
+        }
+      ];
       const res = await this.$request(
         this.requestUrl(),
-        {
-          header: [field.prop],
-          pars: [
-            {
-              field: field.prop,
-              action: "eq",
-              filedType: field.type,
-              value: queryString
-            }
-          ],
-          page: {
-            [this.CONFIG.pageName]: 1,
-            [this.CONFIG.sizeName]: 20
-          },
-          orderBys: []
-        },
+        primary.parameters,
         "POST"
       );
       cb(getDeepProp(res, this.stmt.rowsName.split(".")));
@@ -467,11 +483,14 @@ export default {
     handleSortChange({ prop, order }) {
       if (this.CONFIG.showHeader && this.CONFIG.showSelection) {
         if (prop && order) {
-          this.stmt.parameters.sort.orderFiled = prop;
-          this.stmt.parameters.sort.orderType = order.replace("ending", "");
+          this.stmt.parameters.sort = [
+            {
+              prop,
+              type: order.replace("ending", "")
+            }
+          ];
         } else {
-          this.stmt.parameters.sort.orderFiled = null;
-          this.stmt.parameters.sort.orderType = null;
+          this.stmt.parameters.sort = [];
         }
         this.stmtLoad();
       }

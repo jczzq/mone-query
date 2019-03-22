@@ -90,17 +90,6 @@ export class ListView extends ViewModel {
       }
     };
   }
-  formatParameters() {
-    let parameters = JSON.parse(JSON.stringify(this.parameters));
-    parameters.params = Object.keys(parameters.params)
-      .map(field => {
-        return parameters.params[field];
-      })
-      .filter(
-        x => parameters.params[x].value && parameters.params[x].value !== 0
-      );
-    return parameters;
-  }
   load() {
     return __awaiter(this, arguments, void 0, function*() {
       try {
@@ -201,7 +190,7 @@ export class Param {
   constructor(data = {}) {
     this.field = data.field;
     this.action = data.action;
-    this.filedType = data.filedType;
+    this.fieldType = data.fieldType;
     this.value = data.value;
   }
 }

@@ -240,8 +240,8 @@ params: [
 ]
 sort: [
   {
-    prop: age,
-    type: desc
+    prop: "age',
+    type: "asc"
   }
 ],
 page: {
@@ -262,7 +262,7 @@ page: {
 - [X] 右侧操作栏
 - [x] 批量删除
 - [x] 排列顺序
-- [ ] 默认查询动作
+- [X] 默认查询动作
   - varchar lk
   - option in 
   - data lt & gt

@@ -12,4 +12,4 @@ Mock.mock(/api\/config/, 'get', () => {
 /**
  * mone-query配置
  */
-Mock.mock(/api\/data/, DataResult);
+// Mock.mock("/api/data", DataResult);

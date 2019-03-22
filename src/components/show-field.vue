@@ -103,15 +103,17 @@ export default {
       }
     }
   },
-  mounted() {},
+  mounted() {
+    this.config.forEach(f => {
+      f.checkAll = !f.colProps.some(x => !this.value.includes(x));
+      f.isIndeterminate = false;
+    });
+    this.isIndeterminate = false;
+  },
   watch: {},
   methods: {
     handleCheckAllChange(val) {
-      if (val && Array.isArray(val)) {
-        this.showPropsProxy = val;
-      } else {
-        this.showPropsProxy = val ? this.fields.map(x => x.prop) : [];
-      }
+      this.showPropsProxy = val ? this.fields.map(x => x.prop) : [];
       this.config.forEach(f => {
         f.checkAll = val;
         f.isIndeterminate = false;
