@@ -71,30 +71,49 @@ data() {
 ## MoneQuery Attributes
 | 属性名 | 类型 | 含义 | 可选值 | 默认值 |
 | -- | -- | -- | -- | -- |
-| *config | Object \| String | 表头列 | ajax路径\配置对象 | {} |
-| *data | Array \| String | 数据行 | ajax路径\数据集合 | [] |
+| *config | Object , String | 表头列 | ajax路径\配置对象 | {} |
+| *data | Array , String | 数据行 | ajax路径\数据集合 | [] |
 | height | String/Number | Table高度 | auto\80\80px | auto |
 | max-height | String/Number | Table的最大高度 | - | - |
 | border | Boolean | 是否带有纵向边框 | - | false |
-| formatters | Object | 包含各个列过滤函数的对象 | - | {} |
 | primary-key | String | 主键(数据行多选时必要) | - | id |
-| show-action | Boolean | 是否显示右侧操作栏 | - | - |
+| page-name | String | 分页参数中的pageSize键名 | - | pageIndex |
+| size-name | String | 分页参数中的pageSize键名 | - | pageSize |
+| rows-name | String | ajax请求结果集键名 | - | resultData.rows |
+| total-name | String | ajax请求结果总数键名 | - | resultData.total |
+| colbox | Object | 字段显示框方位 | - | { placement: "top", width: "540px", trigger: "click" } |
+| visible-fields | Boolean,Array | 默认显示字段 | true: 全部显示; false: 全部隐藏; ["propA", "propB", ...] | true |
+| visible-fields-config | Array\<FieldGroup> | 字段在工具栏的显示配置 | - | - |
+| formatters | Object | 包含各个列过滤函数的对象 | - | {} |
+| show-action | Boolean | 是否显示右侧操作栏 | - | false |
+| show-delete | Boolean | 是否显示删除按钮 | - | false |
+| show-header | Boolean | 是否显示表头（包含筛选条件） | - | true |
+| show-selection | Boolean | 是否显示多选框 | - | true |
+| show-index | Boolean | 是否自定义序列 | - | false |
+
+## MoneQuery Events
+| 事件名 | 说明 | 参数 |
+| -- | -- | -- |
+| delete | 点击删除按钮触发 | selection |
+
 
 ### config Attributes
 | 属性名 | 类型 | 含义 | 可选值 | 默认值 |
 | -- | -- | -- | -- | -- |
 | primary-key | String | 主键(数据行多选时必要) | - | id |
 | cols | Array\<Col> | 列 | - | id |
+| page-name | String | 分页参数中的pageSize键名 | - | pageIndex |
+| size-name | String | 分页参数中的pageSize键名 | - | pageSize |
+| rows-name | String | ajax请求结果集键名 | - | resultData.rows |
+| total-name | String | ajax请求结果总数键名 | - | resultData.total |
+| colbox | Object | 字段显示框方位 | - | { placement: "top", width: "540px", trigger: "click" } |
+| visible-fields | Boolean,Array | 默认显示字段 | true: 全部显示; false: 全部隐藏; ["propA", "propB", ...] | true |
+| visible-fields-config | Array\<FieldGroup> | 字段在工具栏的显示配置 | - | - |
+| show-action | Boolean | 是否显示右侧操作栏 | - | false |
+| show-delete | Boolean | 是否显示删除按钮 | - | false |
 | show-header | Boolean | 是否显示表头（包含筛选条件） | - | true |
 | show-selection | Boolean | 是否显示多选框 | - | true |
 | show-index | Boolean | 是否自定义序列 | - | false |
-| rows-name | String | ajax请求结果集键名 | - | resultData.rows |
-| total-name | String | ajax请求结果总数键名 | - | resultData.total |
-| page-name | String | 分页参数中的pageSize键名 | - | pageIndex |
-| size-name | String | 分页参数中的pageSize键名 | - | pageSize |
-| colbox | Object | 字段显示框方位 | - | { placement: "top", width: "540px", trigger: "click" } |
-| visible-fields | Boolean\|Array | 默认显示字段 | true: 全部显示; false: 全部隐藏; ["propA", "propB", ...] | true |
-| visible-fields-config | Array\<FieldGroup> | 字段在工具栏的显示配置 | - | - |
 
 
 #### colbox Attributes
@@ -240,7 +259,7 @@ page: {
 
 ## TODO
 - [X] 左侧锁定列
-- [ ] 右侧操作栏
+- [X] 右侧操作栏
 - [ ] 批量删除
 - [ ] 排列顺序
 - [ ] 默认查询动作

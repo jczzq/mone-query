@@ -11,8 +11,19 @@
         </el-col>
         <el-col :span="12" class="text-right">
           <el-button type="default" @click="resetParam()">重置</el-button>
-          <el-button type="primary" :loading="stmt.loading" @click="stmtLoad()"
-            >搜索</el-button
+          <el-button
+            type="primary"
+            icon="el-icon-search"
+            :loading="stmt.loading"
+            @click="stmtLoad()"
+            >查询</el-button
+          >
+          <el-button
+            v-if="CONFIG.showDelete"
+            type="danger"
+            icon="el-icon-remove"
+            @click="handleBatchDelete()"
+            >删除</el-button
           >
           <!-- <el-button
             type="primary"
@@ -100,7 +111,7 @@
             <el-button
               type="text"
               size="large"
-              :icon="`el-icon-star-${FIXED[item.prop]?'on':'off'}`"
+              :icon="`el-icon-star-${FIXED[item.prop] ? 'on' : 'off'}`"
               @click.stop="FIXED[item.prop] = !FIXED[item.prop]"
             ></el-button>
           </span>
@@ -152,29 +163,13 @@ export default {
       type: Boolean,
       default: false
     },
-    primaryKey: {
-      type: String,
-      default: "id"
-    },
-    pageName: {
-      type: String
-    },
-    sizeName: {
-      type: String
-    },
-    rowsName: {
-      type: String
-    },
-    totalName: {
-      type: String
-    },
-    colbox: {
-      type: Object
-    },
-    visibleFields: {
-      type: Boolean,
-      default: true
-    },
+    primaryKey: String,
+    pageName: String,
+    sizeName: String,
+    rowsName: String,
+    totalName: String,
+    colbox: Object,
+    visibleFields: Boolean,
     visibleFieldConfig: Array,
     formatters: {
       type: Object,
@@ -182,10 +177,11 @@ export default {
         return {};
       }
     },
-    showAction: {
-      type: Boolean,
-      default: false
-    }
+    showAction: Boolean,
+    showDelete: Boolean,
+    showHeader: Boolean,
+    showSelection: Boolean,
+    showIndex: Boolean
   },
   components: {
     showField
@@ -255,14 +251,25 @@ export default {
       }
     },
     initConfig() {
-      this.CONFIG.pageName = this.pageName;
-      this.CONFIG.sizeName = this.sizeName;
-      this.CONFIG.rowsName = this.rowsName;
-      this.CONFIG.totalName = this.totalName;
-      this.CONFIG.visibleFields = this.visibleFields;
-      this.CONFIG.visibleFieldConfig = this.visibleFieldConfig;
-      this.CONFIG.colbox = this.colbox;
+      if (this.primaryKey) this.CONFIG.primaryKey = this.primaryKey;
+      if (this.pageName) this.CONFIG.pageName = this.pageName;
+      if (this.sizeName) this.CONFIG.sizeName = this.sizeName;
+      if (this.rowsName) this.CONFIG.rowsName = this.rowsName;
+      if (this.totalName) this.CONFIG.totalName = this.totalName;
+      if (this.colbox) this.CONFIG.colbox = this.colbox;
+      if (this.visibleFields) this.CONFIG.visibleFields = this.visibleFields;
+      // visibleFieldConfig 无全局配置
+      if (this.visibleFieldConfig) this.CONFIG.visibleFieldConfig = this.visibleFieldConfig;
 
+      if (this.showAction) this.CONFIG.showAction = this.showAction;
+      if (this.showDelete) this.CONFIG.showDelete = this.showDelete;
+      if (this.showHeader) this.CONFIG.showHeader = this.showHeader;
+      if (this.showSelection) this.CONFIG.showSelection = this.showSelection;
+      if (this.showIndex) this.CONFIG.showIndex = this.showIndex;
+
+      if (!this.CONFIG.primaryKey) {
+        this.CONFIG.primaryKey = this.$MONE_QUERY.primaryKey || "id";
+      }
       if (!this.CONFIG.pageName) {
         this.CONFIG.pageName = this.$MONE_QUERY.pageName;
       }
@@ -279,7 +286,22 @@ export default {
         this.CONFIG.colbox = this.$MONE_QUERY.colbox || {};
       }
       if (this.CONFIG.visibleFields == null) {
-        this.CONFIG.visibleFields = this.$MONE_QUERY.visibleFields;
+        this.CONFIG.visibleFields = this.$MONE_QUERY.visibleFields || true;
+      }
+      if (this.CONFIG.showAction == null) {
+        this.CONFIG.showAction = this.$MONE_QUERY.showAction || false;
+      }
+      if (this.CONFIG.showDelete == null) {
+        this.CONFIG.showDelete = this.$MONE_QUERY.showDelete || false;
+      }
+      if (this.CONFIG.showHeader == null) {
+        this.CONFIG.showHeader = this.$MONE_QUERY.showHeader || true;
+      }
+      if (this.CONFIG.showSelection == null) {
+        this.CONFIG.showSelection = this.$MONE_QUERY.showSelection || true;
+      }
+      if (this.CONFIG.showIndex == null) {
+        this.CONFIG.showIndex = this.$MONE_QUERY.showIndex || false;
       }
     },
     // 设置显示字段
@@ -446,6 +468,9 @@ export default {
     // 自定义表头
     customFieldColumn(h, { column, $index }) {
       return h();
+    },
+    handleBatchDelete() {
+      this.$emit("delete", this.multipleSelection);
     }
   }
 };

@@ -9,6 +9,7 @@
       :config="'/config'"
       :data="'/data'"
       :formatters="formatters"
+      @delete="handleDelete"
     >
       <template slot-scope="{ row }">
         <el-button type="default"
@@ -44,7 +45,11 @@ export default {
       }
     };
   },
-  methods: {}
+  methods: {
+    handleDelete(selection) {
+      console.log(selection);
+    }
+  }
 };
 </script>
 

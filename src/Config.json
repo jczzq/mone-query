@@ -1,7 +1,7 @@
 {
   "resultCode": "0000",
   "resultData": {
-    "showSelection": true,
+    "showDelete": true,
     "cols": [
       {
         "label": "姓名",
