@@ -12,13 +12,14 @@
       {
         "label": "年龄",
         "prop": "age",
+        "order": 4,
         "width": "180px",
         "type": "int"
       },
       {
         "label": "年级",
         "prop": "grade",
-        "fixed": true,
+        "fixed": false,
         "width": "180px",
         "type": "option",
         "list": [
@@ -39,6 +40,7 @@
       {
         "label": "出生日期",
         "prop": "birthday",
+        "order": 1,
         "width": "380px",
         "type": "date"
       },

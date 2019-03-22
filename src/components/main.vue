@@ -188,9 +188,7 @@ export default {
   },
   data() {
     return {
-      CONFIG: {
-        cols: []
-      },
+      CONFIG: {},
       CONFIGLoading: false,
       COMPONENT_NAME_MAP: Col.TYPES,
       stmt: new ListView({
@@ -214,6 +212,17 @@ export default {
             col.valueFormat = this.getValueFormat(col);
             col.elType = this.getElType(col);
             return new Col(col);
+          })
+          .sort((a, b) => {
+            const aa = a.order || Infinity;
+            const bb = b.order || Infinity;
+            if (aa > bb) {
+              return 1;
+            } else if (aa < bb) {
+              return -1;
+            } else {
+              return 0;
+            }
           });
       }
       return [];
@@ -259,7 +268,9 @@ export default {
       if (this.colbox) this.CONFIG.colbox = this.colbox;
       if (this.visibleFields) this.CONFIG.visibleFields = this.visibleFields;
       // visibleFieldConfig 无全局配置
-      if (this.visibleFieldConfig) this.CONFIG.visibleFieldConfig = this.visibleFieldConfig;
+      if (this.visibleFieldConfig) {
+        this.CONFIG.visibleFieldConfig = this.visibleFieldConfig;
+      }
 
       if (this.showAction) this.CONFIG.showAction = this.showAction;
       if (this.showDelete) this.CONFIG.showDelete = this.showDelete;

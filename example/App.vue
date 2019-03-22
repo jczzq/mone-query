@@ -2,7 +2,6 @@
   <div class="app">
     <h3 class="text-center">mone-query</h3>
     <mone-query
-      class="bd"
       border
       show-action
       base-url="/api"
@@ -13,7 +12,7 @@
     >
       <template slot-scope="{ row }">
         <el-button type="default"
-          >重置
+          >编辑
           <!-- {{ JSON.stringify(row) }} -->
         </el-button>
       </template>
