@@ -46,7 +46,7 @@
       <el-table
         :data="stmt.rows"
         :border="border"
-        :row-key="row => row[CONFIG.primaryKey]"
+        :row-key="primaryKey"
         :height="height"
         :max-height="maxHeight"
         :show-header="CONFIG.showHeader"
@@ -319,10 +319,15 @@ export default {
     },
     // 设置显示字段
     setShowFields() {
-      if (this.CONFIG.visibleFields && Array.isArray(this.CONFIG.visibleFields)) {
+      if (
+        this.CONFIG.visibleFields &&
+        Array.isArray(this.CONFIG.visibleFields)
+      ) {
         this.showProps = this.CONFIG.visibleFields;
       } else {
-        this.showProps = this.CONFIG.visibleFields ? this.CONFIG.cols.map(x => x.prop) : [];
+        this.showProps = this.CONFIG.visibleFields
+          ? this.CONFIG.cols.map(x => x.prop)
+          : [];
       }
       // 设置字段在工具栏的显示规则
       if (this.CONFIG.visibleFieldConfig) {
@@ -436,21 +441,23 @@ export default {
     },
     stmtLoad() {
       const primary = this.stmt;
-      if (typeof this.data !== "string") {
-        primary.rows = this.data;
-        primary.total = this.data.length;
-        return;
-      }
       if (primary.loading) return;
 
       primary.parameters.colProps = this.showProps;
       primary.parameters.params = this.formatParams();
 
-      primary
-        .load(this.$request, this.requestUrl(), primary.parameters, "POST")
-        .catch(e => {
-          e.message && this.$notify.error(e.message);
-        });
+      if (typeof this.data !== "string") {
+        this.$emit("search", primary.parameters);
+        primary.rows = this.data;
+        primary.total = this.data.length;
+        return;
+      } else {
+        primary
+          .load(this.$request, this.requestUrl(), primary.parameters, "POST")
+          .catch(e => {
+            e.message && this.$notify.error(e.message);
+          });
+      }
     },
     handleSelectionChange(val) {
       if (this.CONFIG.showHeader && this.CONFIG.showSelection) {

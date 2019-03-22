@@ -4,11 +4,11 @@
     <mone-query
       border
       show-action
-      base-url="/api"
-      :config="'/config'"
-      :data="'/data'"
+      :config="config"
+      :data="data"
       :formatters="formatters"
       @delete="handleDelete"
+      @search="handleSearch"
     >
       <template slot-scope="{ row }">
         <el-button type="default"
@@ -27,8 +27,10 @@ export default {
   name: "app",
   data() {
     return {
-      Config,
-      Data,
+      config: Config.resultData,
+      config2: "/config",
+      data: Data.resultData.rows,
+      data2: "/data",
       formatters: {
         grade: (row, column, cellValue, index) => {
           // console.log(row, column, cellValue, index);
@@ -47,6 +49,16 @@ export default {
   methods: {
     handleDelete(selection) {
       console.log(selection);
+    },
+    handleSearch(parameters) {
+      setTimeout(() => {
+        this.data = this.data.concat(
+          this.data.map(x => {
+            x.id++;
+            return x;
+          })
+        );
+      }, 1500);
     }
   }
 };

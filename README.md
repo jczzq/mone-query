@@ -95,6 +95,7 @@ data() {
 | 事件名 | 说明 | 参数 |
 | -- | -- | -- |
 | delete | 点击删除按钮触发 | selection |
+| search | 点击查询按钮触发 | parameters |
 
 
 ### config Attributes
