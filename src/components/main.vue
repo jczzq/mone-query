@@ -1,109 +1,132 @@
 <template>
   <div class="mone-query" v-loading="CONFIGLoading">
-    <el-row class="tool-box">
-      <el-col :span="24" class="text-right">
-        <el-button type="default" @click="resetParam()">重置</el-button>
-        <el-button type="primary" :loading="stmt.loading" @click="stmtLoad()"
-          >搜索</el-button
-        >
-        <!-- <el-button
-          type="primary"
-          :loading="stmt.exporting"
-          @click="handleExport()"
-          >导出</el-button
-        > -->
-        <show-field
-          v-if="CONFIG && CONFIG.colbox"
-          :fields="CONFIG.cols"
-          ref="showFieldRef"
-          v-model="showProps"
-          :placement="CONFIG.colbox.placement"
-          :width="CONFIG.colbox.width"
-          :trigger="CONFIG.colbox.trigger"
-          :config="configShowFields"
-        />
-      </el-col>
-    </el-row>
-    <el-table
-      v-if="CONFIG"
-      :data="stmt.rows"
-      :border="border || CONFIG.border"
-      :row-key="row => row[primaryKey || CONFIG.primaryKey]"
-      :height="CONFIG.height"
-      :show-header="CONFIG.showHeader"
-      :max-height="CONFIG.maxHeight"
-      @selection-change="handleSelectionChange"
-      @sort-change="handleSortChange"
-    >
-      <el-table-column
-        v-if="CONFIG.showIndex"
-        :index="index => index + 1"
-        type="index"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        v-if="CONFIG.showSelection && showProps && showProps.length"
-        reserve-selection
-        type="selection"
-        align="center"
-      ></el-table-column>
-      <el-table-column
-        sortable="custom"
-        v-for="item in cols"
-        :key="item.prop"
-        :column-key="item.prop"
-        :prop="item.prop"
-        :width="item.width"
+    <div class="mone-query-body" v-if="CONFIG">
+      <el-row class="tool-box">
+        <el-col :span="12">
+          <el-button
+            icon="el-icon-refresh"
+            :loading="CONFIGLoading"
+            @click="loadConfig()"
+          ></el-button>
+        </el-col>
+        <el-col :span="12" class="text-right">
+          <el-button type="default" @click="resetParam()">重置</el-button>
+          <el-button type="primary" :loading="stmt.loading" @click="stmtLoad()"
+            >搜索</el-button
+          >
+          <!-- <el-button
+            type="primary"
+            :loading="stmt.exporting"
+            @click="handleExport()"
+            >导出</el-button
+          > -->
+          <show-field
+            v-if="CONFIG.colbox"
+            :fields="CONFIG.cols"
+            ref="showFieldRef"
+            v-model="showProps"
+            :placement="CONFIG.colbox.placement"
+            :width="CONFIG.colbox.width"
+            :trigger="CONFIG.colbox.trigger"
+            :config="configShowFields"
+          />
+        </el-col>
+      </el-row>
+      <el-table
+        :data="stmt.rows"
+        :border="border"
+        :row-key="row => row[CONFIG.primaryKey]"
+        :height="height"
+        :max-height="maxHeight"
+        :show-header="CONFIG.showHeader"
+        @selection-change="handleSelectionChange"
+        @sort-change="handleSortChange"
       >
-        <span slot="header" slot-scope="scope">
-          <span>
-            {{ item.label }}
-          </span>
-          <el-popover v-if="COMPONENT_NAME_MAP.hasOwnProperty(item.type)">
-            <component
-              clearable
-              class="inline-block"
-              size="mini"
-              @click.native.stop=""
-              @select="handleChoose"
-              :fetch-suggestions="
-                (queryString, cb) => {
-                  querySearchAsync(queryString, cb, item);
-                }
-              "
-              :value-key="item.prop"
-              :trigger-on-focus="false"
-              :placeholder="item.placeholder"
-              :value-format="item.valueFormat"
-              :type="item.elType"
-              :is="COMPONENT_NAME_MAP[item.type]"
-              v-model="stmt.parameters.params[item.prop].value"
-            >
-            </component>
+        <el-table-column
+          v-if="CONFIG.showIndex"
+          :index="index => index + 1"
+          type="index"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          v-if="CONFIG.showSelection && showProps && showProps.length"
+          reserve-selection
+          type="selection"
+          align="center"
+        ></el-table-column>
+        <el-table-column
+          :fixed="FIXED[item.prop]"
+          sortable="custom"
+          v-for="item in cols"
+          :key="item.prop"
+          :column-key="item.prop"
+          :prop="item.prop"
+          :width="item.width"
+          :formatter="formatters[item.prop]"
+        >
+          <span slot="header" slot-scope="scope">
+            <span>
+              {{ item.label }}
+            </span>
+            <el-popover v-if="item.hasType()">
+              <component
+                clearable
+                class="inline-block"
+                size="mini"
+                @click.native.stop=""
+                @select="handleChoose"
+                :fetch-suggestions="
+                  (queryString, cb) => {
+                    querySearchAsync(queryString, cb, item);
+                  }
+                "
+                :value-key="item.prop"
+                :trigger-on-focus="false"
+                :placeholder="item.placeholder"
+                :value-format="item.valueFormat"
+                :type="item.elType"
+                :is="COMPONENT_NAME_MAP[item.type]"
+                v-model="stmt.parameters.params[item.prop].value"
+              >
+              </component>
+              <el-button
+                slot="reference"
+                type="text"
+                size="large"
+                icon="el-icon-search"
+                @click.stop=""
+              ></el-button>
+            </el-popover>
             <el-button
-              slot="reference"
               type="text"
-              icon="el-icon-search"
-              @click.stop=""
+              size="large"
+              :icon="`el-icon-star-${FIXED[item.prop]?'on':'off'}`"
+              @click.stop="FIXED[item.prop] = !FIXED[item.prop]"
             ></el-button>
-          </el-popover>
-        </span>
-      </el-table-column>
-    </el-table>
+          </span>
+        </el-table-column>
+        <el-table-column label="操作" fixed="right" v-if="showAction">
+          <template slot-scope="{ row }">
+            <slot :row="row"></slot>
+          </template>
+        </el-table-column>
+      </el-table>
 
-    <el-pagination
-      :current-page.sync="stmt.parameters.page[stmt.pageName]"
-      :page-size.sync="stmt.parameters.page[stmt.sizeName]"
-      layout="total, prev, pager, next, sizes, ->, jumper"
-      :total="stmt.total"
-      @size-change="stmtLoad()"
-      @current-change="stmtLoad()"
-    >
-    </el-pagination>
+      <el-pagination
+        :current-page.sync="stmt.parameters.page[stmt.pageName]"
+        :page-size.sync="stmt.parameters.page[stmt.sizeName]"
+        layout="total, prev, pager, next, sizes, ->, jumper"
+        :total="stmt.total"
+        @size-change="stmtLoad()"
+        @current-change="stmtLoad()"
+      >
+      </el-pagination>
+    </div>
   </div>
 </template>
 
 <script>
+import Col from "../class/Col";
 import { ListView, Param, getDeepProp } from "../class/ViewModel";
 import FieldGroup from "../class/FieldGroup";
 import showField from "./show-field";
@@ -120,6 +143,9 @@ export default {
       required: true
     },
     height: {
+      type: [String, Number]
+    },
+    maxHeight: {
       type: [String, Number]
     },
     border: {
@@ -149,23 +175,28 @@ export default {
       type: Boolean,
       default: true
     },
-    visibleFieldConfig: Array
+    visibleFieldConfig: Array,
+    formatters: {
+      type: Object,
+      default() {
+        return {};
+      }
+    },
+    showAction: {
+      type: Boolean,
+      default: false
+    }
   },
   components: {
     showField
   },
   data() {
     return {
-      CONFIG: {},
-      CONFIGLoading: false,
-      COMPONENT_NAME_MAP: {
-        varchar: "el-autocomplete",
-        date: "el-date-picker",
-        datetime: "el-date-picker"
-        // bit: "el-checkbox",
-        // int: "el-input-number",
-        // time: "el-time-picker",
+      CONFIG: {
+        cols: []
       },
+      CONFIGLoading: false,
+      COMPONENT_NAME_MAP: Col.TYPES,
       stmt: new ListView({
         pageName: this.pageName,
         sizeName: this.sizeName,
@@ -174,7 +205,8 @@ export default {
       }),
       showProps: [],
       configShowFields: [],
-      multipleSelection: []
+      multipleSelection: [],
+      FIXED: {}
     };
   },
   computed: {
@@ -185,19 +217,17 @@ export default {
           .map(col => {
             col.valueFormat = this.getValueFormat(col);
             col.elType = this.getElType(col);
-            return col;
+            return new Col(col);
           });
       }
       return [];
     }
   },
-  async created() {
-    // 1. 加载配置
-    await this.loadConfig();
-    // 1. 初始化外部设置
-    this.setup();
-    this.stmtLoad();
+  created() {
+    // 加载配置
+    this.loadConfig();
   },
+  mounted() {},
   methods: {
     async loadConfig() {
       try {
@@ -210,9 +240,14 @@ export default {
         } else {
           this.CONFIG = this.config;
         }
+        // 初始化外部设置
         this.initConfig();
-        // 查询参数
+        // 初始化查询参数
         this.resetParam();
+        // 设置显示字段
+        this.setShowFields();
+        // 查询数据
+        this.stmtLoad();
       } catch (error) {
         this.$notify.error("mone-query: load config data failed");
       } finally {
@@ -247,24 +282,20 @@ export default {
         this.CONFIG.visibleFields = this.$MONE_QUERY.visibleFields;
       }
     },
-    setup() {
-      // 显示字段
-      this.setShowFields();
-    },
     // 设置显示字段
     setShowFields() {
-      // 设置字段在工具栏的显示规则
-      if (this.CONFIG.visibleFieldConfig) {
-        this.configShowFields = this.CONFIG.visibleFieldConfig;
-      } else {
-        this.configShowFields.push(
-          new FieldGroup({
-            colProps: this.showProps
-          })
-        );
-      }
       this.$nextTick(() => {
         this.$refs.showFieldRef.handleCheckAllChange(this.CONFIG.visibleFields);
+        // 设置字段在工具栏的显示规则
+        if (this.CONFIG.visibleFieldConfig) {
+          this.configShowFields = this.CONFIG.visibleFieldConfig;
+        } else {
+          this.configShowFields.push(
+            new FieldGroup({
+              colProps: this.showProps
+            })
+          );
+        }
       });
     },
     requestUrl() {
@@ -272,6 +303,7 @@ export default {
     },
     resetParam() {
       const _params = {};
+      const _fixed = {};
       this.CONFIG.cols.forEach(col => {
         _params[col.prop] = new Param({
           field: col.prop,
@@ -279,7 +311,9 @@ export default {
           action: "eq",
           value: this.getParamVal(col)
         });
+        _fixed[col.prop] = col.fixed;
       });
+      this.FIXED = _fixed;
       this.stmt.parameters.params = _params;
     },
     getValueFormat(col) {
@@ -295,11 +329,12 @@ export default {
     },
     getParamVal(col) {
       switch (col.type) {
+        case "option":
         case "date":
         case "datetime":
           return [];
         default:
-          return null;
+          return void 0;
       }
     },
     getElType(col) {
@@ -418,6 +453,7 @@ export default {
 
 <style lang="scss">
 .mone-query {
+  min-height: 150px;
   .m-l {
     margin-left: 12px;
   }

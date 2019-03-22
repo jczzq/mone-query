@@ -78,6 +78,7 @@ data() {
 | border | Boolean | 是否带有纵向边框 | - | false |
 | formatters | Object | 包含各个列过滤函数的对象 | - | {} |
 | primary-key | String | 主键(数据行多选时必要) | - | id |
+| show-action | Boolean | 是否显示右侧操作栏 | - | - |
 
 ### config Attributes
 | 属性名 | 类型 | 含义 | 可选值 | 默认值 |
@@ -113,6 +114,7 @@ data() {
 | order | Number | 排列顺序 | - | - |
 | action | String | 查询类型 | - | varchar:lk,option:in; data:lt& gt; datetime:le& ge |
 | placeholder | String | 输入提示 | - | - |
+| fixed | Boolean | 是否固定列 | - | - |
 
 #### Col.type enum
 | 枚举值 | 含义 |
@@ -237,7 +239,7 @@ page: {
 
 
 ## TODO
-- [ ] 左侧锁定列
+- [X] 左侧锁定列
 - [ ] 右侧操作栏
 - [ ] 批量删除
 - [ ] 排列顺序

@@ -4,10 +4,19 @@
     <mone-query
       class="bd"
       border
+      show-action
       base-url="/api"
       :config="'/config'"
       :data="'/data'"
-    />
+      :formatters="formatters"
+    >
+      <template slot-scope="{ row }">
+        <el-button type="default"
+          >重置
+          <!-- {{ JSON.stringify(row) }} -->
+        </el-button>
+      </template>
+    </mone-query>
   </div>
 </template>
 
@@ -19,7 +28,20 @@ export default {
   data() {
     return {
       Config,
-      Data
+      Data,
+      formatters: {
+        grade: (row, column, cellValue, index) => {
+          // console.log(row, column, cellValue, index);
+          const col = Config.resultData.cols.find(
+            x => x.prop === column.columnKey
+          );
+          const item = col.list.find(x => x.value === cellValue) || {};
+          return item.label || cellValue;
+        },
+        isMarried: (row, column, cellValue, index) => {
+          return cellValue ? "是" : "否";
+        }
+      }
     };
   },
   methods: {}
