@@ -58,7 +58,7 @@ data() {
       - colbox: 工具栏的字段面板
       - cols: 表头
       - ......
-  
+
 4. 
 
 
@@ -234,4 +234,6 @@ page: {
 - 排列顺序
 - 默认查询动作
   - varchar lk
-  -  lk
+  - option in 
+  - data lt & gt
+  - datetime le & ge
