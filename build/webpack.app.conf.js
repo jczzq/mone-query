@@ -18,12 +18,6 @@ var webpackConfig = merge(baseWebpackConfig, {
   entry: {
     'app': './example/index.js'
   },
-  module: {
-    rules: utils.styleLoaders({
-      sourceMap: config.app.productionSourceMap,
-      extract: true
-    })
-  },
   resolve: {
     alias: {
       'mone-query': resolve('lib')
