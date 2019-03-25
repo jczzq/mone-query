@@ -1,7 +1,7 @@
 {
   "name": "mone-query",
   "version": "0.0.1",
-  "description": "基于vue的可编辑表格插件",
+  "description": "基于element-ui的数据查询通用组件",
   "author": "jczzq <1195262383@qq.com>",
   "scripts": {
     "dev": "node build/dev-server.js",
