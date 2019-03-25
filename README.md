@@ -202,6 +202,7 @@ data() {
     - le 小于等于
   - filedType `String`
     - varchar 字符串
+    - option 多选
     - date 日期范围
     - datetime 日期时间范围
     - bit 单选（暂不支持）
@@ -237,6 +238,12 @@ params: [
     action: "ge",
     filedType: "datetime",
     value: "2019-03-13",
+  },
+  {
+    field: "grade",
+    action: "in",
+    filedType: "option",
+    value: [1,2,5],
   }
 ]
 sort: [
