@@ -5,7 +5,7 @@
   "author": "jczzq <1195262383@qq.com>",
   "scripts": {
     "dev": "node build/dev-server.js",
-    "build": "npm run build:pro && npm run build:lite",
+    "lib": "npm run build:lite && npm run build:pro",
     "build:pro": "cross-env SERVICEENV=pro node build/build.js",
     "build:lite": "cross-env SERVICEENV=lite node build/build-lite.js",
     "build:app": "node build/build-app.js",
