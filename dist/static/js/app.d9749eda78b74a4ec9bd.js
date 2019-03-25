@@ -116,7 +116,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
 
 if (false) {
-  require("./mock");
+  require('./mock');
 }
 
 // 全局引入
@@ -311,4 +311,4 @@ module.exports = {"resultCode":"0000","resultData":{"total":233,"rows":[{"id":1,
 
 /***/ })
 ],[5]);
-//# sourceMappingURL=app.95ae952b0ecb70081442.js.map
+//# sourceMappingURL=app.d9749eda78b74a4ec9bd.js.map
