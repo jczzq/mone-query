@@ -19,6 +19,7 @@ module.exports = merge(baseWebpackConfig, {
     },
     resolve: {
         alias: {
+          'mone-query': resolve('lib')
         }
     },
     module: {},

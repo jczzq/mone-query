@@ -3,8 +3,7 @@ import moneOptions from './components/options';
 import Bus from './bus';
 import request from './api/request';
 
-// import './style.scss';
-import 'element-theme-nio';
+import './style.scss';
 import Header from 'element-ui/lib/header';
 import Button from 'element-ui/lib/button';
 import Row from 'element-ui/lib/row';
@@ -21,11 +20,11 @@ import Loading from 'element-ui/lib/loading';
 import Notification from 'element-ui/lib/notification';
 import Checkbox from 'element-ui/lib/checkbox';
 import CheckboxGroup from 'element-ui/lib/checkbox-group';
-// import InputNumber from "element-ui/lib/input-number";
-// import TimePicker from "element-ui/lib/time-picker";
 
 /* istanbul ignore next */
 moneQuery.install = function(Vue, options = {}) {
+  if (moneQuery.installed) return;
+  moneQuery.installed = true;
   Vue.prototype.$ELEMENT = { size: options.size || 'small' };
   Vue.use(Header);
   Vue.use(Button);
@@ -42,8 +41,6 @@ moneQuery.install = function(Vue, options = {}) {
   Vue.use(Loading.directive);
   Vue.use(Checkbox);
   Vue.use(CheckboxGroup);
-  // Vue.use(InputNumber);
-  // Vue.use(TimePicker);
   Vue.prototype.$notify = Notification;
 
   options.baseUrl = options.baseUrl || '';

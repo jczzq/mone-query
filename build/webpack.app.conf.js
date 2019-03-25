@@ -10,6 +10,9 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin')
 var OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
 
 var env = config.app.env
+function resolve(dir) {
+  return path.join(__dirname, '..', dir);
+}
 
 var webpackConfig = merge(baseWebpackConfig, {
   entry: {
@@ -20,6 +23,11 @@ var webpackConfig = merge(baseWebpackConfig, {
       sourceMap: config.app.productionSourceMap,
       extract: true
     })
+  },
+  resolve: {
+    alias: {
+      'mone-query': resolve('lib')
+    }
   },
   devtool: config.app.productionSourceMap ? '#source-map' : false,
   output: {

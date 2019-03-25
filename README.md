@@ -270,3 +270,14 @@ page: {
   - datetime le & ge
 - option多选下拉框类型
 - [x] 结果集formatter处理
+
+## 轻量版
+mone-query默认依赖element-ui部分组件和axios请求库，这里有两个构建版供你的应用选择：
+- 全部引入(js≈360kb, style≈103kb)：包括element相关组件(可以在应用中使用这些组件，因为它们已经全局注册过了)；另外是axios。
+- 只引入核心代码(≈24kb, style≈1kb)，如果你的应用已经引入了element和axios，那建议只引入核心代码即可。
+  ```
+    import "mone-query/lite/style.css";
+    import moneQuery from "mone-query/lite";
+    ...
+  ```
+PS： 这里说来说去最终不影响物质守恒，如果你不是太关心你应用的构建体积可以忽略

@@ -1,7 +1,7 @@
 <template>
   <div class="app">
     <h3 class="text-center">mone-query</h3>
-    <mone-query
+    <mone-query ref="moneQuery" class="bd"
       border
       show-action
       :config="config"
@@ -17,6 +17,10 @@
         </el-button>
       </template>
     </mone-query>
+
+    <p>
+      <button @click="handleCleanSelection()">清除选择</button>
+    </p>
   </div>
 </template>
 
@@ -51,14 +55,14 @@ export default {
       console.log(selection);
     },
     handleSearch(parameters) {
+      const _row = JSON.parse(JSON.stringify(this.data[0]));
       setTimeout(() => {
-        this.data = this.data.concat(
-          this.data.map(x => {
-            x.id++;
-            return x;
-          })
-        );
+        _row.id = Date.now();
+        this.data.push(_row);
       }, 1500);
+    },
+    handleCleanSelection() {
+      this.$refs.moneQuery.$refs[this.$refs.moneQuery.tableId].clearSelection();
     }
   }
 };
@@ -66,7 +70,7 @@ export default {
 
 <style lang="scss">
 .bd {
-  border: 1px solid palevioletred;
+  border: 1px dotted skyblue;
 }
 </style>
 

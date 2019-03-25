@@ -44,9 +44,10 @@
         </el-col>
       </el-row>
       <el-table
+        :ref="tableId"
         :data="stmt.rows"
         :border="border"
-        :row-key="primaryKey"
+        :row-key="CONFIG.primaryKey"
         :height="height"
         :max-height="maxHeight"
         :show-header="CONFIG.showHeader"
@@ -188,6 +189,7 @@ export default {
   },
   data() {
     return {
+      tableId: Symbol(),
       CONFIG: {},
       PARAMS: {},
       CONFIGLoading: false,
@@ -281,7 +283,7 @@ export default {
       if (this.showIndex) this.CONFIG.showIndex = this.showIndex;
 
       if (!this.CONFIG.primaryKey) {
-        this.CONFIG.primaryKey = this.$MONE_QUERY.primaryKey || "id";
+        this.CONFIG.primaryKey = "id";
       }
       if (!this.CONFIG.pageName) {
         this.CONFIG.pageName = this.$MONE_QUERY.pageName;

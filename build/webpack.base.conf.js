@@ -65,11 +65,16 @@ module.exports = {
         use: ['style-loader', 'css-loader']
       },
       {
-        test: /\.less$/,
+        test: /\.scss$/,
         use: [
           'style-loader',
           { loader: 'css-loader', options: { importLoaders: 1 } },
-          'less-loader'
+          {
+            loader: 'sass-loader',
+            options: {
+              includePaths: ["node_modules/element-theme-nio"]
+            }
+          }
         ]
       }
     ]
