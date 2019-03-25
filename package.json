@@ -1,6 +1,6 @@
 {
   "name": "mone-query",
-  "version": "0.2.1",
+  "version": "0.0.1",
   "description": "基于vue的可编辑表格插件",
   "author": "jczzq <1195262383@qq.com>",
   "scripts": {
