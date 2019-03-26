@@ -1,4 +1,3 @@
-import Vue from 'vue';
 import axios from 'axios';
 
 const defaultAxios = axios.create();
@@ -6,12 +5,9 @@ const defaultAxios = axios.create();
 // 响应拦截器
 defaultAxios.interceptors.response.use(
   res => {
-    console.log('response-success');
-    Vue.prototype.$bus.$emit('response-success', res.data);
     return res.data;
   },
   err => {
-    Vue.prototype.$bus.$emit('response-error', err);
     return Promise.reject(err);
   }
 );

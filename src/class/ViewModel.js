@@ -101,6 +101,8 @@ export class ListView extends ViewModel {
         this.total = getDeepProp(res, this.totalName.split('.'));
         return Promise.resolve(res);
       } catch (error) {
+        this.rows = [];
+        this.total = 0;
         return Promise.reject(error);
       } finally {
         this.loading = false;

@@ -4,9 +4,9 @@ import App from './App';
 require('./mock');
 
 // 全局引入
-// import 'mone-query/style.css';
-// import MoneQuery from 'mone-query';
-import MoneQuery from '@';
+import 'mone-query/style.css';
+import MoneQuery from 'mone-query';
+// import MoneQuery from '@';
 Vue.use(MoneQuery, {
   baseUrl: '/api'
 });

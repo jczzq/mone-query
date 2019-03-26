@@ -96,11 +96,18 @@ data() {
 | -- | -- | -- |
 | delete | 点击删除按钮触发 | selection |
 | search | 点击查询按钮触发 | parameters |
+| config-success | 查询配置成功 | res |
+| config-error | 查询配置失败 | error |
+| config-complete | 查询配置完成(成功或失败都会触发) | - |
+| data-success | 查询结果集成功 | res |
+| data-error | 查询结果集失败 | error |
+| data-complete | 查询结果集完成(成功或失败都会触发) | - |
 
 
 ### config Attributes
 | 属性名 | 类型 | 含义 | 可选值 | 默认值 |
 | -- | -- | -- | -- | -- |
+| baseUrl | String | ajax根路径 | - | - |
 | primary-key | String | 主键(数据行多选时必要) | - | id |
 | cols | Array\<Col> | 列 | - | id |
 | page-name | String | 分页参数中的pageSize键名 | - | pageIndex |
@@ -135,6 +142,7 @@ data() {
 | action | String | 查询类型 | - | varchar:lk,option:in; data:lt& gt; datetime:le& ge |
 | placeholder | String | 输入提示 | - | - |
 | fixed | Boolean | 是否固定列 | - | - |
+| options | Array | 多选组件的选项列表,eg: [{label, value}] | - | - |
 
 #### Col.type enum
 | 枚举值 | 含义 |
@@ -157,7 +165,7 @@ data() {
 
 ## 查询**配置**标准结构（application/json）
 - resultCode 响应码
-- resultData 响应结果
+- resultData 响应结果(注意`resultData`必须是JSON对象)
   - primaryKey `String` 主键prop（默认：id）
   - rowsName `String` 结果集属性名，将根据rowsName指定的属性名获取目标结果集(默认: resultData.rows)
   - totalName `String` 结果总数属性名，将根据totalName指定的属性名获取目标结果总数(默认: resultData.total)
@@ -259,10 +267,10 @@ page: {
 ```
 
 ## 查询**结果集**标准结构（application/json）
-- resultCode 响应码
-- resultData 响应结果
-  - rows 结果集
-  - total 结果总数
+- \[resultCode] 响应码
+- \[resultData] 响应结果
+  - \[rows] 结果集
+  - \[total] 结果总数
 
 
 ## TODO

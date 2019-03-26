@@ -13,6 +13,7 @@ export default class Col {
     this.action = data.action;
     this.placeholder = data.placeholder;
     this.fixed = data.fixed;
+    this.options = data.options;
   }
   static TYPES = {
     varchar: "el-autocomplete",

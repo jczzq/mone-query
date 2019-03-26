@@ -22,7 +22,7 @@
         "fixed": false,
         "width": "180px",
         "type": "option",
-        "list": [
+        "options": [
           { "label": "一年级", "value": 1 },
           { "label": "二年级", "value": 2 },
           { "label": "三年级", "value": 3 },

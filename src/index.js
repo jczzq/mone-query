@@ -1,6 +1,6 @@
 import moneQuery from './components/main';
 import moneOptions from './components/options';
-import Bus from './bus';
+// import Bus from './bus';
 import request from './api/request';
 
 import './style.scss';
@@ -17,7 +17,6 @@ import Select from 'element-ui/lib/select';
 import Option from 'element-ui/lib/option';
 import DatePicker from 'element-ui/lib/date-picker';
 import Loading from 'element-ui/lib/loading';
-import Notification from 'element-ui/lib/notification';
 import Checkbox from 'element-ui/lib/checkbox';
 import CheckboxGroup from 'element-ui/lib/checkbox-group';
 
@@ -41,7 +40,6 @@ moneQuery.install = function(Vue, options = {}) {
   Vue.use(Loading.directive);
   Vue.use(Checkbox);
   Vue.use(CheckboxGroup);
-  Vue.prototype.$notify = Notification;
 
   options.baseUrl = options.baseUrl || '';
   Vue.prototype.$MONE_QUERY = options;
@@ -49,7 +47,7 @@ moneQuery.install = function(Vue, options = {}) {
   Vue.component(moneOptions.name, moneOptions);
   Vue.component(moneQuery.name, moneQuery);
   Vue.prototype.$request = request;
-  Vue.prototype.$bus = new Vue(Bus);
+  // Vue.prototype.$bus = new Vue(Bus);
 };
 
 if (typeof window !== 'undefined' && window.Vue) {

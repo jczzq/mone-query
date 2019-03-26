@@ -93,6 +93,7 @@
                   }
                 "
                 :value-key="item.prop"
+                :options="item.options"
                 :trigger-on-focus="false"
                 :placeholder="item.placeholder"
                 :value-format="item.valueFormat"
@@ -117,7 +118,11 @@
             ></el-button>
           </span>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" v-if="showAction && showProps && showProps.length">
+        <el-table-column
+          label="操作"
+          fixed="right"
+          v-if="showAction && showProps && showProps.length"
+        >
           <template slot-scope="{ row }">
             <slot :row="row"></slot>
           </template>
@@ -133,6 +138,17 @@
         @current-change="stmtLoad()"
       >
       </el-pagination>
+    </div>
+    <div class="error-box" v-else>
+      <p>╮(╯▽╰)╭ &nbsp;Sorry~ loading failed...</p>
+      <el-button
+        size="large"
+        type="text"
+        icon="el-icon-refresh"
+        :loading="CONFIGLoading"
+        @click="loadConfig()"
+        >Retry
+      </el-button>
     </div>
   </div>
 </template>
@@ -190,7 +206,7 @@ export default {
   data() {
     return {
       tableId: Symbol(),
-      CONFIG: {},
+      CONFIG: null,
       PARAMS: {},
       CONFIGLoading: false,
       COMPONENT_NAME_MAP: Col.TYPES,
@@ -233,13 +249,19 @@ export default {
   mounted() {},
   methods: {
     async loadConfig() {
+      if (this.CONFIGLoading) return;
       try {
         this.CONFIGLoading = true;
         if (typeof this.config === "string") {
-          const { resultData } = await this.$request(this.config, null, "GET", {
+          const res = await this.$request(this.config, null, "GET", {
             baseURL: this.$MONE_QUERY.baseUrl
           });
-          if (resultData) this.CONFIG = resultData;
+          if (res && res.resultData) {
+            this.CONFIG = res.resultData;
+            this.$emit("config-success", res);
+          } else {
+            throw res;
+          }
         } else {
           this.CONFIG = this.config;
         }
@@ -258,8 +280,9 @@ export default {
         // 查询数据
         this.stmtLoad();
       } catch (error) {
-        this.$notify.error("mone-query: load config data failed");
+        this.$emit("config-error", error);
       } finally {
+        this.$emit("config-complete");
         this.CONFIGLoading = false;
       }
     },
@@ -282,6 +305,9 @@ export default {
       if (this.showSelection) this.CONFIG.showSelection = this.showSelection;
       if (this.showIndex) this.CONFIG.showIndex = this.showIndex;
 
+      if (!this.CONFIG.baseUrl) {
+        this.CONFIG.baseUrl = this.$MONE_QUERY.baseUrl;
+      }
       if (!this.CONFIG.primaryKey) {
         this.CONFIG.primaryKey = "id";
       }
@@ -343,7 +369,7 @@ export default {
       }
     },
     requestUrl() {
-      return this.$MONE_QUERY.baseUrl + this.data;
+      return this.CONFIG.baseUrl + this.data;
     },
     resetParam() {
       const _params = {};
@@ -441,24 +467,33 @@ export default {
       });
       return pars;
     },
-    stmtLoad() {
+    async stmtLoad() {
       const primary = this.stmt;
       if (primary.loading) return;
 
       primary.parameters.colProps = this.showProps;
       primary.parameters.params = this.formatParams();
 
+      this.$emit("search", primary.parameters);
+
       if (typeof this.data !== "string") {
-        this.$emit("search", primary.parameters);
         primary.rows = this.data;
         primary.total = this.data.length;
         return;
       } else {
-        primary
-          .load(this.$request, this.requestUrl(), primary.parameters, "POST")
-          .catch(e => {
-            e.message && this.$notify.error(e.message);
-          });
+        try {
+          const res = await primary.load(
+            this.$request,
+            this.requestUrl(),
+            primary.parameters,
+            "POST"
+          );
+          this.$emit("data-success", res);
+        } catch (e) {
+          this.$emit("data-error", e);
+        } finally {
+          this.$emit("data-complete");
+        }
       }
     },
     handleSelectionChange(val) {
@@ -517,7 +552,6 @@ export default {
 
 <style lang="scss">
 .mone-query {
-  min-height: 150px;
   .m-l {
     margin-left: 12px;
   }
@@ -531,6 +565,12 @@ export default {
   .tool-box {
     padding: 16px 0;
     background-color: white;
+  }
+  .error-box {
+    color: #ccc;
+    min-height: 220px;
+    text-align: center;
+    padding-top: 100px;
   }
 }
 </style>
