@@ -272,11 +272,11 @@ page: {
 - [x] 排列顺序
 - [X] 默认查询动作
   - varchar lk
-  - option in 
+  - option in
   - data lt & gt
   - datetime le & ge
-- option多选下拉框类型
 - [x] 结果集formatter处理
+- [ ] Field组件优化
 
 ## 轻量版
 mone-query默认依赖element-ui部分组件和axios请求库，这里有两个构建版供你的应用选择：

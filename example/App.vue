@@ -1,9 +1,20 @@
 <template>
   <div class="app">
-    <h3 class="text-center">mone-query</h3>
-    <mone-query ref="moneQuery" class="bd"
+    <h2 class="title">mone-query</h2>
+    <section>
+      <h3>
+        前端直接传入参数方式
+      </h3>
+      <pre v-text="codeBlock_1">
+        
+      </pre>
+    </section>
+    <mone-query
+      ref="moneQuery"
+      class="bd"
       border
       show-action
+      show-index
       :config="config"
       :data="data"
       :formatters="formatters"
@@ -47,7 +58,8 @@ export default {
         isMarried: (row, column, cellValue, index) => {
           return cellValue ? "是" : "否";
         }
-      }
+      },
+      codeBlock_1: ''
     };
   },
   methods: {
@@ -69,6 +81,9 @@ export default {
 </script>
 
 <style lang="scss">
+.title {
+  text-align: center;
+}
 .bd {
   border: 1px dotted skyblue;
 }

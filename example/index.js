@@ -1,13 +1,12 @@
 import Vue from 'vue';
 import App from './App';
 
-if (process.env.NODE_ENV === 'development') {
-  require('./mock');
-}
+require('./mock');
 
 // 全局引入
-import 'mone-query/style.css';
-import MoneQuery from 'mone-query';
+// import 'mone-query/style.css';
+// import MoneQuery from 'mone-query';
+import MoneQuery from '@';
 Vue.use(MoneQuery, {
   baseUrl: '/api'
 });

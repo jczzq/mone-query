@@ -55,7 +55,7 @@
         @sort-change="handleSortChange"
       >
         <el-table-column
-          v-if="CONFIG.showIndex"
+          v-if="CONFIG.showIndex && showProps && showProps.length"
           :index="index => index + 1"
           type="index"
           align="center"
@@ -76,7 +76,7 @@
           :width="item.width"
           :formatter="formatters[item.prop]"
         >
-          <span slot="header" slot-scope="scope">
+          <span slot="header" slot-scope="{}">
             <span>
               {{ item.label }}
             </span>
@@ -117,7 +117,7 @@
             ></el-button>
           </span>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" v-if="showAction">
+        <el-table-column label="操作" fixed="right" v-if="showAction && showProps && showProps.length">
           <template slot-scope="{ row }">
             <slot :row="row"></slot>
           </template>
