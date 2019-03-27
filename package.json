@@ -1,6 +1,6 @@
 {
   "name": "mone-query",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "基于element-ui的数据查询通用组件",
   "author": "jczzq <1195262383@qq.com>",
   "scripts": {
