@@ -54,6 +54,7 @@
         @selection-change="handleSelectionChange"
         @sort-change="handleSortChange"
       >
+        
         <el-table-column
           fixed
           v-if="CONFIG.showIndex && showProps && showProps.length"
@@ -105,6 +106,7 @@
               >
               </component>
               <el-button
+                title="搜索"
                 slot="reference"
                 type="text"
                 size="large"
@@ -113,6 +115,7 @@
               ></el-button>
             </el-popover>
             <el-button
+              title="固定左侧"
               type="text"
               size="large"
               :icon="`el-icon-star-${FIXED[item.prop] ? 'on' : 'off'}`"
@@ -573,6 +576,37 @@ export default {
     min-height: 220px;
     text-align: center;
     padding-top: 100px;
+  }
+  .list-complete-move {
+    transition: all 1s;
+  }
+  .list-complete-enter, .list-complete-leave-to {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  .list-complete-enter-active {
+    transition: all 1s;
+  }
+  .list-complete-leave-active {
+    transition: all 1s;
+    position: absolute;
+  }
+  .bounce-enter-active {
+    animation: bounce-in .5s;
+  }
+  .bounce-leave-active {
+    animation: bounce-in .5s reverse;
+  }
+  @keyframes bounce-in {
+    0% {
+      transform: scale(0);
+    }
+    50% {
+      transform: scale(1.5);
+    }
+    100% {
+      transform: scale(1);
+    }
   }
 }
 </style>
