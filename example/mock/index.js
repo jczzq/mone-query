@@ -21,7 +21,7 @@ Mock.mock('/api/config', 'get', ConfigResult);
 /**
  * 请求结果集失败
  */
-let counter = 0;
+var counter = 0;
 Mock.mock('/api/data-error', () => {
   counter++;
   if (counter % 2) {
