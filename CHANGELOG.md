@@ -9,6 +9,7 @@
 ### Improve
 - Ajax请求配置失败处理
 - 左侧锁定列title提示
+- 设置最小列宽150px
 
 # 0.0.1
 ### Feature
