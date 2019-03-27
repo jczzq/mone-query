@@ -21,7 +21,7 @@
           <el-button
             v-if="CONFIG.showDelete"
             type="danger"
-            icon="el-icon-remove"
+            icon="el-icon-delete"
             @click="handleBatchDelete()"
             >删除</el-button
           >
