@@ -577,20 +577,6 @@ export default {
     text-align: center;
     padding-top: 100px;
   }
-  .list-complete-move {
-    transition: all 1s;
-  }
-  .list-complete-enter, .list-complete-leave-to {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  .list-complete-enter-active {
-    transition: all 1s;
-  }
-  .list-complete-leave-active {
-    transition: all 1s;
-    position: absolute;
-  }
   .bounce-enter-active {
     animation: bounce-in .5s;
   }
