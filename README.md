@@ -273,19 +273,6 @@ page: {
   - \[total] 结果总数
 
 
-## TODO
-- [X] 左侧锁定列
-- [X] 右侧操作栏
-- [x] 批量删除
-- [x] 排列顺序
-- [X] 默认查询动作
-  - varchar lk
-  - option in
-  - data lt & gt
-  - datetime le & ge
-- [x] 结果集formatter处理
-- [ ] Field组件优化
-
 ## 轻量版
 mone-query默认依赖element-ui部分组件和axios请求库，这里有两个构建版供你的应用选择：
 - 全部引入(js≈360kb, style≈103kb)：包括element相关组件(可以在应用中使用这些组件，因为它们已经全局注册过了)；另外是axios。
