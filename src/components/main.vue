@@ -70,6 +70,7 @@
           align="center"
         ></el-table-column>
         <el-table-column
+          min-width="150px"
           :fixed="FIXED[item.prop]"
           sortable="custom"
           v-for="item in cols"
@@ -582,6 +583,9 @@ export default {
   }
   .bounce-leave-active {
     animation: bounce-in .5s reverse;
+  }
+  .el-table th > .cell {
+    white-space: nowrap;
   }
   @keyframes bounce-in {
     0% {
