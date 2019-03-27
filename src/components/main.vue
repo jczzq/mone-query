@@ -55,12 +55,14 @@
         @sort-change="handleSortChange"
       >
         <el-table-column
+          fixed
           v-if="CONFIG.showIndex && showProps && showProps.length"
           :index="index => index + 1"
           type="index"
           align="center"
         ></el-table-column>
         <el-table-column
+          fixed
           v-if="CONFIG.showSelection && showProps && showProps.length"
           reserve-selection
           type="selection"
