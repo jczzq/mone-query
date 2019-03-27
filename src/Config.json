@@ -6,7 +6,6 @@
       {
         "label": "姓名",
         "prop": "name",
-        "width": "180px",
         "type": "varchar"
       },
       {
@@ -20,7 +19,6 @@
         "label": "年级",
         "prop": "grade",
         "fixed": false,
-        "width": "180px",
         "type": "option",
         "options": [
           { "label": "一年级", "value": 1 },
@@ -34,7 +32,6 @@
       {
         "label": "是否已婚",
         "prop": "isMarried",
-        "width": "180px",
         "type": "bit"
       },
       {

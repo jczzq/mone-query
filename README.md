@@ -3,8 +3,8 @@
 `mone-query`是基于`element-ui`的查询组件，它通过丰富的配置让你尽可能少的前端编码就可以完成大部分报表需求。
 
 ## 必要依赖
-`vue` >= 2.4.0
-
+`vue` >= 2.5.2 <br>
+`element-ui` >= 2.4.0 <br>
 `axios` >= 0.16.0
 
 ## 安装
@@ -15,13 +15,15 @@ npm install mone-query -D
 
 ### umd方式
 ```
-<script src="../mone-query.min.js"></script>
+<link href="mone-query/lib/style.css" rel="stylesheet">
+<script src="../mone-query/lib/index.js"></script>
 ```
 
 ## 快速上手
 
 ```
 import Vue from "vue";
+import 'mone-query/style.css';
 import MoneQuery from "mone-query";
 Vue.use(MoneQuery, {
   // options
