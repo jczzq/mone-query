@@ -54,7 +54,6 @@
         @selection-change="handleSelectionChange"
         @sort-change="handleSortChange"
       >
-        
         <el-table-column
           fixed
           v-if="CONFIG.showIndex && showProps && showProps.length"
@@ -80,7 +79,18 @@
           :width="item.width"
           :formatter="formatters[item.prop]"
         >
-          <span slot="header" slot-scope="{}">
+          <span
+            @click.stop=""
+            draggable
+            @dragstart="handleDragstart"
+            @dragenter.capture.stop="handleDragenter"
+            @dragleave.capture.stop="handleDragleave"
+            @dragend="handleDrop"
+            :data-field="item.prop"
+            class="cell-box"
+            slot="header"
+            slot-scope="{}"
+          >
             <span>
               {{ item.label }}
             </span>
@@ -112,7 +122,6 @@
                 type="text"
                 size="large"
                 icon="el-icon-search"
-                @click.stop=""
               ></el-button>
             </el-popover>
             <el-button
@@ -220,7 +229,9 @@ export default {
       showProps: [],
       configShowFields: [],
       multipleSelection: [],
-      FIXED: {}
+      FIXED: {},
+      dragField: null,
+      dropField: null
     };
   },
   computed: {
@@ -551,6 +562,42 @@ export default {
     },
     handleBatchDelete() {
       this.$emit("delete", this.multipleSelection);
+    },
+    // 拖拽相关
+    handleDragstart(e) {
+      e.currentTarget.style.cursor = "-webkit-grabbing";
+      this.dragField = e.currentTarget.dataset.field;
+      // console.log("drag: ", this.dragField);
+    },
+    handleDragenter(e) {
+      // console.log("enter: ", e.currentTarget.dataset.field);
+      e.currentTarget.style.backgroundColor = "#ebeef5";
+      //   e.preventDefault();
+      if (e.currentTarget.dataset.field === this.dragField) return;
+      this.dropField = e.currentTarget.dataset.field;
+    },
+    handleDragleave(e) {
+      // console.log("leave: ", e.currentTarget.dataset.field);
+      e.currentTarget.style.backgroundColor = "#F2FCFD";
+    },
+    handleDrop(e) {
+      e.currentTarget.style.cursor = "-webkit-grab";
+      // console.log("drop: ", this.dropField);
+      // 更新拖拽数据
+      if (this.dragField && this.dropField) {
+        let f = this.CONFIG.cols;
+        let dragItem = f.find(x => x.prop === this.dragField);
+        let dropItem = f.find(x => x.prop === this.dropField);
+        if (dragItem && dropItem) {
+          const dragItemId = dragItem.order;
+          dragItem.order = dropItem.order;
+          dropItem.order = dragItemId;
+          this.$set(this.CONFIG, "cols", f);
+        }
+
+        this.dragField = null;
+        this.dropField = null;
+      }
     }
   }
 };
@@ -579,13 +626,23 @@ export default {
     padding-top: 100px;
   }
   .bounce-enter-active {
-    animation: bounce-in .5s;
+    animation: bounce-in 0.5s;
   }
   .bounce-leave-active {
-    animation: bounce-in .5s reverse;
+    animation: bounce-in 0.5s reverse;
   }
   .el-table th > .cell {
     white-space: nowrap;
+    padding-right: 0;
+    padding-left: 6px;
+    .cell-box {
+      box-sizing: border-box;
+      padding-left: 4px;
+      border-radius: 2px;
+      cursor: -webkit-grab;
+      display: inline-block;
+      width: calc(100% - 24px);
+    }
   }
   @keyframes bounce-in {
     0% {

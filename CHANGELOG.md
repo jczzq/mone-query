@@ -1,4 +1,12 @@
 ## TODO
+### Feature
+- 列拖拽排序
+- 行拖拽排序
+- 报表标题
+
+### Fixed
+### Improve
+- Field组件优化
 - Field组件优化
 
 # 0.0.2
