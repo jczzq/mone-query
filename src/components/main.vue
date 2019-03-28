@@ -83,8 +83,8 @@
             @click.stop=""
             draggable
             @dragstart="handleDragstart"
-            @dragenter.capture.stop="handleDragenter"
-            @dragleave.capture.stop="handleDragleave"
+            @dragenter="handleDragenter"
+            @dragleave="handleDragleave"
             @dragend="handleDrop"
             :data-field="item.prop"
             class="cell-box"
@@ -129,7 +129,7 @@
               type="text"
               size="large"
               :icon="`el-icon-star-${FIXED[item.prop] ? 'on' : 'off'}`"
-              @click.stop="FIXED[item.prop] = !FIXED[item.prop]"
+              @click="FIXED[item.prop] = !FIXED[item.prop]"
             ></el-button>
           </span>
         </el-table-column>
@@ -570,6 +570,7 @@ export default {
       // console.log("drag: ", this.dragField);
     },
     handleDragenter(e) {
+      if (e.currentTarget !== e.target) return;
       // console.log("enter: ", e.currentTarget.dataset.field);
       e.currentTarget.style.backgroundColor = "#ebeef5";
       //   e.preventDefault();
@@ -577,6 +578,7 @@ export default {
       this.dropField = e.currentTarget.dataset.field;
     },
     handleDragleave(e) {
+      if (e.currentTarget !== e.target) return;
       // console.log("leave: ", e.currentTarget.dataset.field);
       e.currentTarget.style.backgroundColor = "#F2FCFD";
     },
