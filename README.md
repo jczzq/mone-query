@@ -105,6 +105,12 @@ data() {
 | data-error | 查询结果集失败 | error |
 | data-complete | 查询结果集完成(成功或失败都会触发) | - |
 
+## MoneQuery Slots
+| 名称 | 说明 |
+| -- | -- |
+| header | 头部栏 |
+| header-left | 头部栏左侧 |
+
 
 ### config Attributes
 | 属性名 | 类型 | 含义 | 可选值 | 默认值 |
