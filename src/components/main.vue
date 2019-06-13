@@ -1,48 +1,54 @@
 <template>
   <div class="mone-query" v-loading="CONFIGLoading">
     <div class="mone-query-body" v-if="CONFIG">
-      <el-row class="tool-box">
-        <el-col :span="12">
-          <el-button
-            icon="el-icon-refresh"
-            :loading="CONFIGLoading"
-            @click="loadConfig()"
-          ></el-button>
-        </el-col>
-        <el-col :span="12" class="text-right">
-          <el-button type="default" @click="resetParam()">重置</el-button>
-          <el-button
-            type="primary"
-            icon="el-icon-search"
-            :loading="stmt.loading"
-            @click="stmtLoad()"
-            >查询</el-button
-          >
-          <el-button
-            v-if="CONFIG.showDelete"
-            type="danger"
-            icon="el-icon-delete"
-            @click="handleBatchDelete()"
-            >删除</el-button
-          >
-          <!-- <el-button
+      <slot name="header">
+        <el-row class="tool-box">
+          <el-col :span="8">
+            <el-button
+              class="p-2"
+              size="large"
+              type="text"
+              icon="el-icon-refresh"
+              :loading="CONFIGLoading"
+              @click="loadConfig()"
+            ></el-button>
+            <slot name="header-left"></slot>
+          </el-col>
+          <el-col :span="16" class="text-right">
+            <el-button type="default" @click="resetParam()">重置</el-button>
+            <el-button
+              type="primary"
+              icon="el-icon-search"
+              :loading="stmt.loading"
+              @click="stmtLoad()"
+              >查询</el-button
+            >
+            <el-button
+              v-if="CONFIG.showDelete"
+              type="danger"
+              icon="el-icon-delete"
+              @click="handleBatchDelete()"
+              >删除</el-button
+            >
+            <!-- <el-button
             type="primary"
             :loading="stmt.exporting"
             @click="handleExport()"
             >导出</el-button
           > -->
-          <show-field
-            v-if="CONFIG.colbox"
-            :fields="CONFIG.cols"
-            ref="showFieldRef"
-            v-model="showProps"
-            :placement="CONFIG.colbox.placement"
-            :width="CONFIG.colbox.width"
-            :trigger="CONFIG.colbox.trigger"
-            :config="configShowFields"
-          />
-        </el-col>
-      </el-row>
+            <show-field
+              v-if="CONFIG.colbox"
+              :fields="CONFIG.cols"
+              ref="showFieldRef"
+              v-model="showProps"
+              :placement="CONFIG.colbox.placement"
+              :width="CONFIG.colbox.width"
+              :trigger="CONFIG.colbox.trigger"
+              :config="configShowFields"
+            />
+          </el-col>
+        </el-row>
+      </slot>
       <el-table
         :ref="tableId"
         :data="stmt.rows"
@@ -93,12 +99,19 @@
           >
             <span>
               {{ item.label }}
+              <el-button
+                title="固定左侧"
+                type="text"
+                size="large"
+                :icon="`el-icon-star-${FIXED[item.prop] ? 'on' : 'off'}`"
+                @click="FIXED[item.prop] = !FIXED[item.prop]"
+              ></el-button>
             </span>
-            <el-popover v-if="item.hasType()">
+            <p class="param-box">
               <component
-                clearable
                 class="inline-block"
                 size="mini"
+                clearable
                 @click.native.stop=""
                 @select="handleChoose"
                 :fetch-suggestions="
@@ -108,6 +121,7 @@
                 "
                 :value-key="item.prop"
                 :options="item.options"
+                :multiple="item.multiple || true"
                 :trigger-on-focus="false"
                 :placeholder="item.placeholder"
                 :value-format="item.valueFormat"
@@ -116,21 +130,7 @@
                 v-model="PARAMS[item.prop].value"
               >
               </component>
-              <el-button
-                title="搜索"
-                slot="reference"
-                type="text"
-                size="large"
-                icon="el-icon-search"
-              ></el-button>
-            </el-popover>
-            <el-button
-              title="固定左侧"
-              type="text"
-              size="large"
-              :icon="`el-icon-star-${FIXED[item.prop] ? 'on' : 'off'}`"
-              @click="FIXED[item.prop] = !FIXED[item.prop]"
-            ></el-button>
+            </p>
           </span>
         </el-table-column>
         <el-table-column
@@ -147,7 +147,7 @@
       <el-pagination
         :current-page.sync="stmt.parameters.page[stmt.pageName]"
         :page-size.sync="stmt.parameters.page[stmt.sizeName]"
-        layout="total, prev, pager, next, sizes, ->, jumper"
+        :layout="CONFIG.pageLayout || 'total, prev, pager, next, sizes, ->, jumper'"
         :total="stmt.total"
         @size-change="stmtLoad()"
         @current-change="stmtLoad()"
@@ -196,6 +196,7 @@ export default {
       default: false
     },
     primaryKey: String,
+    pageLayout: String,
     pageName: String,
     sizeName: String,
     rowsName: String,
@@ -305,6 +306,7 @@ export default {
     },
     initConfig() {
       if (this.primaryKey) this.CONFIG.primaryKey = this.primaryKey;
+      if (this.pageLayout) this.CONFIG.pageLayout = this.pageLayout;
       if (this.pageName) this.CONFIG.pageName = this.pageName;
       if (this.sizeName) this.CONFIG.sizeName = this.sizeName;
       if (this.rowsName) this.CONFIG.rowsName = this.rowsName;
@@ -327,6 +329,9 @@ export default {
       }
       if (!this.CONFIG.primaryKey) {
         this.CONFIG.primaryKey = "id";
+      }
+      if (!this.CONFIG.pageLayout) {
+        this.CONFIG.pageLayout = this.$MONE_QUERY.pageLayout;
       }
       if (!this.CONFIG.pageName) {
         this.CONFIG.pageName = this.$MONE_QUERY.pageName;
@@ -610,6 +615,9 @@ export default {
   .m-l {
     margin-left: 12px;
   }
+  .p-2 {
+    padding: 8px;
+  }
   .m-r {
     margin-left: 12px;
   }
@@ -621,6 +629,7 @@ export default {
     padding: 16px 0;
     background-color: white;
   }
+
   .error-box {
     color: #ccc;
     min-height: 220px;
@@ -633,17 +642,41 @@ export default {
   .bounce-leave-active {
     animation: bounce-in 0.5s reverse;
   }
+  .el-table th {
+    vertical-align: top;
+  }
+  .el-table th div {
+    line-height: normal;
+  }
   .el-table th > .cell {
     white-space: nowrap;
     padding-right: 0;
     padding-left: 6px;
     .cell-box {
       box-sizing: border-box;
-      padding-left: 4px;
+      // padding-left: 4px;
       border-radius: 2px;
       cursor: -webkit-grab;
       display: inline-block;
       width: calc(100% - 24px);
+      .param-box {
+        padding: 0;
+        font-size: 0;
+      }
+      .el-range-editor,
+      .el-select,
+      .el-select__tags,
+      .el-autocomplete,
+      .el-input {
+        width: 100%;
+        padding: 0;
+      }
+      .el-range-editor.el-input__inner {
+        padding: 3px 10px;
+      }
+    }
+    .caret-wrapper {
+      vertical-align: top;
     }
   }
   @keyframes bounce-in {

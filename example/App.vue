@@ -23,6 +23,7 @@
         @delete="handleDelete"
         @search="handleSearch"
       >
+        <button slot="header-left">自定义按钮 slot: header-left</button>
       </mone-query>
     </section>
 
@@ -68,7 +69,8 @@
         @config-success="handleConfigSuccess"
         @config-error="handleConfigError"
         @config-complete="handleConfigComplete"
-      ></mone-query>
+      >
+      </mone-query>
     </section>
 
     <section>
@@ -85,7 +87,9 @@
         @data-success="handleDataSuccess"
         @data-error="handleDataError"
         @data-complete="handleDataComplete"
-      ></mone-query>
+      >
+        <button slot="header">自定义按钮 slot: header</button>
+      </mone-query>
     </section>
 
     <p>
