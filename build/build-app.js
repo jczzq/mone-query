@@ -10,6 +10,8 @@ var webpack = require('webpack')
 var config = require('../config')
 var webpackConfig = require('./webpack.app.conf')
 
+var ghpages = require('gh-pages');
+
 var spinner = ora('building for production...')
 spinner.start()
 
@@ -31,5 +33,9 @@ rm(path.join(config.app.assetsRoot, config.app.assetsSubDirectory), err => {
       '  Tip: built files are meant to be served over an HTTP server.\n' +
       '  Opening index.html over file:// won\'t work.\n'
     ))
+
+    ghpages.publish('dist', function(err) {
+      console.log("ghpages publish ", err || "success!");
+    });
   })
 })
