@@ -7,7 +7,13 @@
 ### Fixed
 ### Improve
 - Field组件优化
-- Field组件优化
+
+# 0.1.0
+### Feature
+- 新增slot：header 和 header-left
+
+### Improve
+- 查询框布局
 
 # 0.0.2
 ### Feature
